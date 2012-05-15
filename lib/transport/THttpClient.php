@@ -186,13 +186,16 @@ class THttpClient extends TTransport {
     }
     $this->buf_ = '';
 
+    $trackErrors = ini_get('track_errors');
+    ini_set('track_errors', 1);
     $contextid = stream_context_create(array('http' => $options));
     $this->handle_ = @fopen($this->scheme_.'://'.$host.$this->uri_, 'r', false, $contextid);
+    ini_set('track_errors', $trackErrors);
 
     // Connect failed?
     if ($this->handle_ === FALSE) {
       $this->handle_ = null;
-      $error = 'THttpClient: Could not connect to '.$host.$this->uri_;
+      $error = 'THttpClient: Could not connect to '.$host.$this->uri_.', PHP Error: '.$php_errormsg;
       throw new TTransportException($error, TTransportException::NOT_OPEN);
     }
   }
