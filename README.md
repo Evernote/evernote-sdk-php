@@ -9,6 +9,8 @@ The SDK also contains two samples. The code in sample/client demonstrates the ba
 
 Prerequisites
 -------------
+This SDK makes use of PHP namespaces, and as such requires PHP 5.3 or later.
+
 In order to use the code in this SDK, you need to obtain an API key from http://dev.evernote.com/documentation/cloud. You'll also find full API documentation on that page.
 
 In order to run the sample code, you need a user account on the sandbox service where you will do your development. Sign up for an account at https://sandbox.evernote.com/Registration.action 
