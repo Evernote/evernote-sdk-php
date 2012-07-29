@@ -1,4 +1,4 @@
-<?
+<?php
 
   /*
    * Copyright 2011-2012 Evernote Corporation.
