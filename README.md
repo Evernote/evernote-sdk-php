@@ -1,5 +1,7 @@
-Evernote SDK for PHP version 1.21
+Evernote SDK for PHP
 =========================================
+
+Evernote API version 1.22
 
 Overview
 --------
