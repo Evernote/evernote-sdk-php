@@ -493,7 +493,7 @@ class UserStore_checkVersion_args {
 
   public $clientName = null;
   public $edamVersionMajor = 1;
-  public $edamVersionMinor = 21;
+  public $edamVersionMinor = 22;
 
   public function __construct($vals=null) {
     if (!isset(self::$_TSPEC)) {

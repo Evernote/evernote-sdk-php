@@ -3283,4 +3283,404 @@ class ClientUsageMetrics {
 
 }
 
+class RelatedQuery {
+  static $_TSPEC;
+
+  public $noteGuid = null;
+  public $plainText = null;
+
+  public function __construct($vals=null) {
+    if (!isset(self::$_TSPEC)) {
+      self::$_TSPEC = array(
+        1 => array(
+          'var' => 'noteGuid',
+          'type' => \TType::STRING,
+          ),
+        2 => array(
+          'var' => 'plainText',
+          'type' => \TType::STRING,
+          ),
+        );
+    }
+    if (is_array($vals)) {
+      if (isset($vals['noteGuid'])) {
+        $this->noteGuid = $vals['noteGuid'];
+      }
+      if (isset($vals['plainText'])) {
+        $this->plainText = $vals['plainText'];
+      }
+    }
+  }
+
+  public function getName() {
+    return 'RelatedQuery';
+  }
+
+  public function read($input)
+  {
+    $xfer = 0;
+    $fname = null;
+    $ftype = 0;
+    $fid = 0;
+    $xfer += $input->readStructBegin($fname);
+    while (true)
+    {
+      $xfer += $input->readFieldBegin($fname, $ftype, $fid);
+      if ($ftype == \TType::STOP) {
+        break;
+      }
+      switch ($fid)
+      {
+        case 1:
+          if ($ftype == \TType::STRING) {
+            $xfer += $input->readString($this->noteGuid);
+          } else {
+            $xfer += $input->skip($ftype);
+          }
+          break;
+        case 2:
+          if ($ftype == \TType::STRING) {
+            $xfer += $input->readString($this->plainText);
+          } else {
+            $xfer += $input->skip($ftype);
+          }
+          break;
+        default:
+          $xfer += $input->skip($ftype);
+          break;
+      }
+      $xfer += $input->readFieldEnd();
+    }
+    $xfer += $input->readStructEnd();
+    return $xfer;
+  }
+
+  public function write($output) {
+    $xfer = 0;
+    $xfer += $output->writeStructBegin('RelatedQuery');
+    if ($this->noteGuid !== null) {
+      $xfer += $output->writeFieldBegin('noteGuid', \TType::STRING, 1);
+      $xfer += $output->writeString($this->noteGuid);
+      $xfer += $output->writeFieldEnd();
+    }
+    if ($this->plainText !== null) {
+      $xfer += $output->writeFieldBegin('plainText', \TType::STRING, 2);
+      $xfer += $output->writeString($this->plainText);
+      $xfer += $output->writeFieldEnd();
+    }
+    $xfer += $output->writeFieldStop();
+    $xfer += $output->writeStructEnd();
+    return $xfer;
+  }
+
+}
+
+class RelatedResult {
+  static $_TSPEC;
+
+  public $notes = null;
+  public $notebooks = null;
+  public $tags = null;
+
+  public function __construct($vals=null) {
+    if (!isset(self::$_TSPEC)) {
+      self::$_TSPEC = array(
+        1 => array(
+          'var' => 'notes',
+          'type' => \TType::LST,
+          'etype' => \TType::STRUCT,
+          'elem' => array(
+            'type' => \TType::STRUCT,
+            'class' => '\EDAM\Types\Note',
+            ),
+          ),
+        2 => array(
+          'var' => 'notebooks',
+          'type' => \TType::LST,
+          'etype' => \TType::STRUCT,
+          'elem' => array(
+            'type' => \TType::STRUCT,
+            'class' => '\EDAM\Types\Notebook',
+            ),
+          ),
+        3 => array(
+          'var' => 'tags',
+          'type' => \TType::LST,
+          'etype' => \TType::STRUCT,
+          'elem' => array(
+            'type' => \TType::STRUCT,
+            'class' => '\EDAM\Types\Tag',
+            ),
+          ),
+        );
+    }
+    if (is_array($vals)) {
+      if (isset($vals['notes'])) {
+        $this->notes = $vals['notes'];
+      }
+      if (isset($vals['notebooks'])) {
+        $this->notebooks = $vals['notebooks'];
+      }
+      if (isset($vals['tags'])) {
+        $this->tags = $vals['tags'];
+      }
+    }
+  }
+
+  public function getName() {
+    return 'RelatedResult';
+  }
+
+  public function read($input)
+  {
+    $xfer = 0;
+    $fname = null;
+    $ftype = 0;
+    $fid = 0;
+    $xfer += $input->readStructBegin($fname);
+    while (true)
+    {
+      $xfer += $input->readFieldBegin($fname, $ftype, $fid);
+      if ($ftype == \TType::STOP) {
+        break;
+      }
+      switch ($fid)
+      {
+        case 1:
+          if ($ftype == \TType::LST) {
+            $this->notes = array();
+            $_size181 = 0;
+            $_etype184 = 0;
+            $xfer += $input->readListBegin($_etype184, $_size181);
+            for ($_i185 = 0; $_i185 < $_size181; ++$_i185)
+            {
+              $elem186 = null;
+              $elem186 = new \EDAM\Types\Note();
+              $xfer += $elem186->read($input);
+              $this->notes []= $elem186;
+            }
+            $xfer += $input->readListEnd();
+          } else {
+            $xfer += $input->skip($ftype);
+          }
+          break;
+        case 2:
+          if ($ftype == \TType::LST) {
+            $this->notebooks = array();
+            $_size187 = 0;
+            $_etype190 = 0;
+            $xfer += $input->readListBegin($_etype190, $_size187);
+            for ($_i191 = 0; $_i191 < $_size187; ++$_i191)
+            {
+              $elem192 = null;
+              $elem192 = new \EDAM\Types\Notebook();
+              $xfer += $elem192->read($input);
+              $this->notebooks []= $elem192;
+            }
+            $xfer += $input->readListEnd();
+          } else {
+            $xfer += $input->skip($ftype);
+          }
+          break;
+        case 3:
+          if ($ftype == \TType::LST) {
+            $this->tags = array();
+            $_size193 = 0;
+            $_etype196 = 0;
+            $xfer += $input->readListBegin($_etype196, $_size193);
+            for ($_i197 = 0; $_i197 < $_size193; ++$_i197)
+            {
+              $elem198 = null;
+              $elem198 = new \EDAM\Types\Tag();
+              $xfer += $elem198->read($input);
+              $this->tags []= $elem198;
+            }
+            $xfer += $input->readListEnd();
+          } else {
+            $xfer += $input->skip($ftype);
+          }
+          break;
+        default:
+          $xfer += $input->skip($ftype);
+          break;
+      }
+      $xfer += $input->readFieldEnd();
+    }
+    $xfer += $input->readStructEnd();
+    return $xfer;
+  }
+
+  public function write($output) {
+    $xfer = 0;
+    $xfer += $output->writeStructBegin('RelatedResult');
+    if ($this->notes !== null) {
+      if (!is_array($this->notes)) {
+        throw new \TProtocolException('Bad type in structure.', \TProtocolException::INVALID_DATA);
+      }
+      $xfer += $output->writeFieldBegin('notes', \TType::LST, 1);
+      {
+        $output->writeListBegin(\TType::STRUCT, count($this->notes));
+        {
+          foreach ($this->notes as $iter199)
+          {
+            $xfer += $iter199->write($output);
+          }
+        }
+        $output->writeListEnd();
+      }
+      $xfer += $output->writeFieldEnd();
+    }
+    if ($this->notebooks !== null) {
+      if (!is_array($this->notebooks)) {
+        throw new \TProtocolException('Bad type in structure.', \TProtocolException::INVALID_DATA);
+      }
+      $xfer += $output->writeFieldBegin('notebooks', \TType::LST, 2);
+      {
+        $output->writeListBegin(\TType::STRUCT, count($this->notebooks));
+        {
+          foreach ($this->notebooks as $iter200)
+          {
+            $xfer += $iter200->write($output);
+          }
+        }
+        $output->writeListEnd();
+      }
+      $xfer += $output->writeFieldEnd();
+    }
+    if ($this->tags !== null) {
+      if (!is_array($this->tags)) {
+        throw new \TProtocolException('Bad type in structure.', \TProtocolException::INVALID_DATA);
+      }
+      $xfer += $output->writeFieldBegin('tags', \TType::LST, 3);
+      {
+        $output->writeListBegin(\TType::STRUCT, count($this->tags));
+        {
+          foreach ($this->tags as $iter201)
+          {
+            $xfer += $iter201->write($output);
+          }
+        }
+        $output->writeListEnd();
+      }
+      $xfer += $output->writeFieldEnd();
+    }
+    $xfer += $output->writeFieldStop();
+    $xfer += $output->writeStructEnd();
+    return $xfer;
+  }
+
+}
+
+class RelatedResultSpec {
+  static $_TSPEC;
+
+  public $maxNotes = null;
+  public $maxNotebooks = null;
+  public $maxTags = null;
+
+  public function __construct($vals=null) {
+    if (!isset(self::$_TSPEC)) {
+      self::$_TSPEC = array(
+        1 => array(
+          'var' => 'maxNotes',
+          'type' => \TType::I32,
+          ),
+        2 => array(
+          'var' => 'maxNotebooks',
+          'type' => \TType::I32,
+          ),
+        3 => array(
+          'var' => 'maxTags',
+          'type' => \TType::I32,
+          ),
+        );
+    }
+    if (is_array($vals)) {
+      if (isset($vals['maxNotes'])) {
+        $this->maxNotes = $vals['maxNotes'];
+      }
+      if (isset($vals['maxNotebooks'])) {
+        $this->maxNotebooks = $vals['maxNotebooks'];
+      }
+      if (isset($vals['maxTags'])) {
+        $this->maxTags = $vals['maxTags'];
+      }
+    }
+  }
+
+  public function getName() {
+    return 'RelatedResultSpec';
+  }
+
+  public function read($input)
+  {
+    $xfer = 0;
+    $fname = null;
+    $ftype = 0;
+    $fid = 0;
+    $xfer += $input->readStructBegin($fname);
+    while (true)
+    {
+      $xfer += $input->readFieldBegin($fname, $ftype, $fid);
+      if ($ftype == \TType::STOP) {
+        break;
+      }
+      switch ($fid)
+      {
+        case 1:
+          if ($ftype == \TType::I32) {
+            $xfer += $input->readI32($this->maxNotes);
+          } else {
+            $xfer += $input->skip($ftype);
+          }
+          break;
+        case 2:
+          if ($ftype == \TType::I32) {
+            $xfer += $input->readI32($this->maxNotebooks);
+          } else {
+            $xfer += $input->skip($ftype);
+          }
+          break;
+        case 3:
+          if ($ftype == \TType::I32) {
+            $xfer += $input->readI32($this->maxTags);
+          } else {
+            $xfer += $input->skip($ftype);
+          }
+          break;
+        default:
+          $xfer += $input->skip($ftype);
+          break;
+      }
+      $xfer += $input->readFieldEnd();
+    }
+    $xfer += $input->readStructEnd();
+    return $xfer;
+  }
+
+  public function write($output) {
+    $xfer = 0;
+    $xfer += $output->writeStructBegin('RelatedResultSpec');
+    if ($this->maxNotes !== null) {
+      $xfer += $output->writeFieldBegin('maxNotes', \TType::I32, 1);
+      $xfer += $output->writeI32($this->maxNotes);
+      $xfer += $output->writeFieldEnd();
+    }
+    if ($this->maxNotebooks !== null) {
+      $xfer += $output->writeFieldBegin('maxNotebooks', \TType::I32, 2);
+      $xfer += $output->writeI32($this->maxNotebooks);
+      $xfer += $output->writeFieldEnd();
+    }
+    if ($this->maxTags !== null) {
+      $xfer += $output->writeFieldBegin('maxTags', \TType::I32, 3);
+      $xfer += $output->writeI32($this->maxTags);
+      $xfer += $output->writeFieldEnd();
+    }
+    $xfer += $output->writeFieldStop();
+    $xfer += $output->writeStructEnd();
+    return $xfer;
+  }
+
+}
+
 ?>

@@ -688,6 +688,7 @@ class BootstrapSettings {
   public $enableSingleNoteSharing = null;
   public $enableSponsoredAccounts = null;
   public $enableTwitterSharing = null;
+  public $enableLinkedInSharing = null;
 
   public function __construct($vals=null) {
     if (!isset(self::$_TSPEC)) {
@@ -736,6 +737,10 @@ class BootstrapSettings {
           'var' => 'enableTwitterSharing',
           'type' => \TType::BOOL,
           ),
+        12 => array(
+          'var' => 'enableLinkedInSharing',
+          'type' => \TType::BOOL,
+          ),
         );
     }
     if (is_array($vals)) {
@@ -771,6 +776,9 @@ class BootstrapSettings {
       }
       if (isset($vals['enableTwitterSharing'])) {
         $this->enableTwitterSharing = $vals['enableTwitterSharing'];
+      }
+      if (isset($vals['enableLinkedInSharing'])) {
+        $this->enableLinkedInSharing = $vals['enableLinkedInSharing'];
       }
     }
   }
@@ -871,6 +879,13 @@ class BootstrapSettings {
             $xfer += $input->skip($ftype);
           }
           break;
+        case 12:
+          if ($ftype == \TType::BOOL) {
+            $xfer += $input->readBool($this->enableLinkedInSharing);
+          } else {
+            $xfer += $input->skip($ftype);
+          }
+          break;
         default:
           $xfer += $input->skip($ftype);
           break;
@@ -937,6 +952,11 @@ class BootstrapSettings {
     if ($this->enableTwitterSharing !== null) {
       $xfer += $output->writeFieldBegin('enableTwitterSharing', \TType::BOOL, 11);
       $xfer += $output->writeBool($this->enableTwitterSharing);
+      $xfer += $output->writeFieldEnd();
+    }
+    if ($this->enableLinkedInSharing !== null) {
+      $xfer += $output->writeFieldBegin('enableLinkedInSharing', \TType::BOOL, 12);
+      $xfer += $output->writeBool($this->enableLinkedInSharing);
       $xfer += $output->writeFieldEnd();
     }
     $xfer += $output->writeFieldStop();
