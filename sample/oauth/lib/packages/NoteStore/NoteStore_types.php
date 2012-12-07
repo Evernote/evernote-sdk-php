@@ -1097,6 +1097,7 @@ class NoteFilter {
   public $tagGuids = null;
   public $timeZone = null;
   public $inactive = null;
+  public $emphasized = null;
 
   public function __construct($vals=null) {
     if (!isset(self::$_TSPEC)) {
@@ -1133,6 +1134,10 @@ class NoteFilter {
           'var' => 'inactive',
           'type' => \TType::BOOL,
           ),
+        8 => array(
+          'var' => 'emphasized',
+          'type' => \TType::STRING,
+          ),
         );
     }
     if (is_array($vals)) {
@@ -1156,6 +1161,9 @@ class NoteFilter {
       }
       if (isset($vals['inactive'])) {
         $this->inactive = $vals['inactive'];
+      }
+      if (isset($vals['emphasized'])) {
+        $this->emphasized = $vals['emphasized'];
       }
     }
   }
@@ -1238,6 +1246,13 @@ class NoteFilter {
             $xfer += $input->skip($ftype);
           }
           break;
+        case 8:
+          if ($ftype == \TType::STRING) {
+            $xfer += $input->readString($this->emphasized);
+          } else {
+            $xfer += $input->skip($ftype);
+          }
+          break;
         default:
           $xfer += $input->skip($ftype);
           break;
@@ -1296,6 +1311,11 @@ class NoteFilter {
     if ($this->inactive !== null) {
       $xfer += $output->writeFieldBegin('inactive', \TType::BOOL, 7);
       $xfer += $output->writeBool($this->inactive);
+      $xfer += $output->writeFieldEnd();
+    }
+    if ($this->emphasized !== null) {
+      $xfer += $output->writeFieldBegin('emphasized', \TType::STRING, 8);
+      $xfer += $output->writeString($this->emphasized);
       $xfer += $output->writeFieldEnd();
     }
     $xfer += $output->writeFieldStop();
@@ -2544,312 +2564,6 @@ class NoteCollectionCounts {
 
 }
 
-class AdImpressions {
-  static $_TSPEC;
-
-  public $adId = null;
-  public $impressionCount = null;
-  public $impressionTime = null;
-
-  public function __construct($vals=null) {
-    if (!isset(self::$_TSPEC)) {
-      self::$_TSPEC = array(
-        1 => array(
-          'var' => 'adId',
-          'type' => \TType::I32,
-          ),
-        2 => array(
-          'var' => 'impressionCount',
-          'type' => \TType::I32,
-          ),
-        3 => array(
-          'var' => 'impressionTime',
-          'type' => \TType::I32,
-          ),
-        );
-    }
-    if (is_array($vals)) {
-      if (isset($vals['adId'])) {
-        $this->adId = $vals['adId'];
-      }
-      if (isset($vals['impressionCount'])) {
-        $this->impressionCount = $vals['impressionCount'];
-      }
-      if (isset($vals['impressionTime'])) {
-        $this->impressionTime = $vals['impressionTime'];
-      }
-    }
-  }
-
-  public function getName() {
-    return 'AdImpressions';
-  }
-
-  public function read($input)
-  {
-    $xfer = 0;
-    $fname = null;
-    $ftype = 0;
-    $fid = 0;
-    $xfer += $input->readStructBegin($fname);
-    while (true)
-    {
-      $xfer += $input->readFieldBegin($fname, $ftype, $fid);
-      if ($ftype == \TType::STOP) {
-        break;
-      }
-      switch ($fid)
-      {
-        case 1:
-          if ($ftype == \TType::I32) {
-            $xfer += $input->readI32($this->adId);
-          } else {
-            $xfer += $input->skip($ftype);
-          }
-          break;
-        case 2:
-          if ($ftype == \TType::I32) {
-            $xfer += $input->readI32($this->impressionCount);
-          } else {
-            $xfer += $input->skip($ftype);
-          }
-          break;
-        case 3:
-          if ($ftype == \TType::I32) {
-            $xfer += $input->readI32($this->impressionTime);
-          } else {
-            $xfer += $input->skip($ftype);
-          }
-          break;
-        default:
-          $xfer += $input->skip($ftype);
-          break;
-      }
-      $xfer += $input->readFieldEnd();
-    }
-    $xfer += $input->readStructEnd();
-    return $xfer;
-  }
-
-  public function write($output) {
-    $xfer = 0;
-    $xfer += $output->writeStructBegin('AdImpressions');
-    if ($this->adId !== null) {
-      $xfer += $output->writeFieldBegin('adId', \TType::I32, 1);
-      $xfer += $output->writeI32($this->adId);
-      $xfer += $output->writeFieldEnd();
-    }
-    if ($this->impressionCount !== null) {
-      $xfer += $output->writeFieldBegin('impressionCount', \TType::I32, 2);
-      $xfer += $output->writeI32($this->impressionCount);
-      $xfer += $output->writeFieldEnd();
-    }
-    if ($this->impressionTime !== null) {
-      $xfer += $output->writeFieldBegin('impressionTime', \TType::I32, 3);
-      $xfer += $output->writeI32($this->impressionTime);
-      $xfer += $output->writeFieldEnd();
-    }
-    $xfer += $output->writeFieldStop();
-    $xfer += $output->writeStructEnd();
-    return $xfer;
-  }
-
-}
-
-class AdParameters {
-  static $_TSPEC;
-
-  public $clientLanguage = null;
-  public $impressions = null;
-  public $supportHtml = null;
-  public $clientProperties = null;
-
-  public function __construct($vals=null) {
-    if (!isset(self::$_TSPEC)) {
-      self::$_TSPEC = array(
-        2 => array(
-          'var' => 'clientLanguage',
-          'type' => \TType::STRING,
-          ),
-        4 => array(
-          'var' => 'impressions',
-          'type' => \TType::LST,
-          'etype' => \TType::STRUCT,
-          'elem' => array(
-            'type' => \TType::STRUCT,
-            'class' => '\EDAM\NoteStore\AdImpressions',
-            ),
-          ),
-        5 => array(
-          'var' => 'supportHtml',
-          'type' => \TType::BOOL,
-          ),
-        6 => array(
-          'var' => 'clientProperties',
-          'type' => \TType::MAP,
-          'ktype' => \TType::STRING,
-          'vtype' => \TType::STRING,
-          'key' => array(
-            'type' => \TType::STRING,
-          ),
-          'val' => array(
-            'type' => \TType::STRING,
-            ),
-          ),
-        );
-    }
-    if (is_array($vals)) {
-      if (isset($vals['clientLanguage'])) {
-        $this->clientLanguage = $vals['clientLanguage'];
-      }
-      if (isset($vals['impressions'])) {
-        $this->impressions = $vals['impressions'];
-      }
-      if (isset($vals['supportHtml'])) {
-        $this->supportHtml = $vals['supportHtml'];
-      }
-      if (isset($vals['clientProperties'])) {
-        $this->clientProperties = $vals['clientProperties'];
-      }
-    }
-  }
-
-  public function getName() {
-    return 'AdParameters';
-  }
-
-  public function read($input)
-  {
-    $xfer = 0;
-    $fname = null;
-    $ftype = 0;
-    $fid = 0;
-    $xfer += $input->readStructBegin($fname);
-    while (true)
-    {
-      $xfer += $input->readFieldBegin($fname, $ftype, $fid);
-      if ($ftype == \TType::STOP) {
-        break;
-      }
-      switch ($fid)
-      {
-        case 2:
-          if ($ftype == \TType::STRING) {
-            $xfer += $input->readString($this->clientLanguage);
-          } else {
-            $xfer += $input->skip($ftype);
-          }
-          break;
-        case 4:
-          if ($ftype == \TType::LST) {
-            $this->impressions = array();
-            $_size151 = 0;
-            $_etype154 = 0;
-            $xfer += $input->readListBegin($_etype154, $_size151);
-            for ($_i155 = 0; $_i155 < $_size151; ++$_i155)
-            {
-              $elem156 = null;
-              $elem156 = new \EDAM\NoteStore\AdImpressions();
-              $xfer += $elem156->read($input);
-              $this->impressions []= $elem156;
-            }
-            $xfer += $input->readListEnd();
-          } else {
-            $xfer += $input->skip($ftype);
-          }
-          break;
-        case 5:
-          if ($ftype == \TType::BOOL) {
-            $xfer += $input->readBool($this->supportHtml);
-          } else {
-            $xfer += $input->skip($ftype);
-          }
-          break;
-        case 6:
-          if ($ftype == \TType::MAP) {
-            $this->clientProperties = array();
-            $_size157 = 0;
-            $_ktype158 = 0;
-            $_vtype159 = 0;
-            $xfer += $input->readMapBegin($_ktype158, $_vtype159, $_size157);
-            for ($_i161 = 0; $_i161 < $_size157; ++$_i161)
-            {
-              $key162 = '';
-              $val163 = '';
-              $xfer += $input->readString($key162);
-              $xfer += $input->readString($val163);
-              $this->clientProperties[$key162] = $val163;
-            }
-            $xfer += $input->readMapEnd();
-          } else {
-            $xfer += $input->skip($ftype);
-          }
-          break;
-        default:
-          $xfer += $input->skip($ftype);
-          break;
-      }
-      $xfer += $input->readFieldEnd();
-    }
-    $xfer += $input->readStructEnd();
-    return $xfer;
-  }
-
-  public function write($output) {
-    $xfer = 0;
-    $xfer += $output->writeStructBegin('AdParameters');
-    if ($this->clientLanguage !== null) {
-      $xfer += $output->writeFieldBegin('clientLanguage', \TType::STRING, 2);
-      $xfer += $output->writeString($this->clientLanguage);
-      $xfer += $output->writeFieldEnd();
-    }
-    if ($this->impressions !== null) {
-      if (!is_array($this->impressions)) {
-        throw new \TProtocolException('Bad type in structure.', \TProtocolException::INVALID_DATA);
-      }
-      $xfer += $output->writeFieldBegin('impressions', \TType::LST, 4);
-      {
-        $output->writeListBegin(\TType::STRUCT, count($this->impressions));
-        {
-          foreach ($this->impressions as $iter164)
-          {
-            $xfer += $iter164->write($output);
-          }
-        }
-        $output->writeListEnd();
-      }
-      $xfer += $output->writeFieldEnd();
-    }
-    if ($this->supportHtml !== null) {
-      $xfer += $output->writeFieldBegin('supportHtml', \TType::BOOL, 5);
-      $xfer += $output->writeBool($this->supportHtml);
-      $xfer += $output->writeFieldEnd();
-    }
-    if ($this->clientProperties !== null) {
-      if (!is_array($this->clientProperties)) {
-        throw new \TProtocolException('Bad type in structure.', \TProtocolException::INVALID_DATA);
-      }
-      $xfer += $output->writeFieldBegin('clientProperties', \TType::MAP, 6);
-      {
-        $output->writeMapBegin(\TType::STRING, \TType::STRING, count($this->clientProperties));
-        {
-          foreach ($this->clientProperties as $kiter165 => $viter166)
-          {
-            $xfer += $output->writeString($kiter165);
-            $xfer += $output->writeString($viter166);
-          }
-        }
-        $output->writeMapEnd();
-      }
-      $xfer += $output->writeFieldEnd();
-    }
-    $xfer += $output->writeFieldStop();
-    $xfer += $output->writeStructEnd();
-    return $xfer;
-  }
-
-}
-
 class NoteEmailParameters {
   static $_TSPEC;
 
@@ -2957,14 +2671,14 @@ class NoteEmailParameters {
         case 3:
           if ($ftype == \TType::LST) {
             $this->toAddresses = array();
-            $_size167 = 0;
-            $_etype170 = 0;
-            $xfer += $input->readListBegin($_etype170, $_size167);
-            for ($_i171 = 0; $_i171 < $_size167; ++$_i171)
+            $_size151 = 0;
+            $_etype154 = 0;
+            $xfer += $input->readListBegin($_etype154, $_size151);
+            for ($_i155 = 0; $_i155 < $_size151; ++$_i155)
             {
-              $elem172 = null;
-              $xfer += $input->readString($elem172);
-              $this->toAddresses []= $elem172;
+              $elem156 = null;
+              $xfer += $input->readString($elem156);
+              $this->toAddresses []= $elem156;
             }
             $xfer += $input->readListEnd();
           } else {
@@ -2974,14 +2688,14 @@ class NoteEmailParameters {
         case 4:
           if ($ftype == \TType::LST) {
             $this->ccAddresses = array();
-            $_size173 = 0;
-            $_etype176 = 0;
-            $xfer += $input->readListBegin($_etype176, $_size173);
-            for ($_i177 = 0; $_i177 < $_size173; ++$_i177)
+            $_size157 = 0;
+            $_etype160 = 0;
+            $xfer += $input->readListBegin($_etype160, $_size157);
+            for ($_i161 = 0; $_i161 < $_size157; ++$_i161)
             {
-              $elem178 = null;
-              $xfer += $input->readString($elem178);
-              $this->ccAddresses []= $elem178;
+              $elem162 = null;
+              $xfer += $input->readString($elem162);
+              $this->ccAddresses []= $elem162;
             }
             $xfer += $input->readListEnd();
           } else {
@@ -3036,9 +2750,9 @@ class NoteEmailParameters {
       {
         $output->writeListBegin(\TType::STRING, count($this->toAddresses));
         {
-          foreach ($this->toAddresses as $iter179)
+          foreach ($this->toAddresses as $iter163)
           {
-            $xfer += $output->writeString($iter179);
+            $xfer += $output->writeString($iter163);
           }
         }
         $output->writeListEnd();
@@ -3053,9 +2767,9 @@ class NoteEmailParameters {
       {
         $output->writeListBegin(\TType::STRING, count($this->ccAddresses));
         {
-          foreach ($this->ccAddresses as $iter180)
+          foreach ($this->ccAddresses as $iter164)
           {
-            $xfer += $output->writeString($iter180);
+            $xfer += $output->writeString($iter164);
           }
         }
         $output->writeListEnd();
@@ -3288,6 +3002,7 @@ class RelatedQuery {
 
   public $noteGuid = null;
   public $plainText = null;
+  public $filter = null;
 
   public function __construct($vals=null) {
     if (!isset(self::$_TSPEC)) {
@@ -3300,6 +3015,11 @@ class RelatedQuery {
           'var' => 'plainText',
           'type' => \TType::STRING,
           ),
+        3 => array(
+          'var' => 'filter',
+          'type' => \TType::STRUCT,
+          'class' => '\EDAM\NoteStore\NoteFilter',
+          ),
         );
     }
     if (is_array($vals)) {
@@ -3308,6 +3028,9 @@ class RelatedQuery {
       }
       if (isset($vals['plainText'])) {
         $this->plainText = $vals['plainText'];
+      }
+      if (isset($vals['filter'])) {
+        $this->filter = $vals['filter'];
       }
     }
   }
@@ -3345,6 +3068,14 @@ class RelatedQuery {
             $xfer += $input->skip($ftype);
           }
           break;
+        case 3:
+          if ($ftype == \TType::STRUCT) {
+            $this->filter = new \EDAM\NoteStore\NoteFilter();
+            $xfer += $this->filter->read($input);
+          } else {
+            $xfer += $input->skip($ftype);
+          }
+          break;
         default:
           $xfer += $input->skip($ftype);
           break;
@@ -3368,6 +3099,14 @@ class RelatedQuery {
       $xfer += $output->writeString($this->plainText);
       $xfer += $output->writeFieldEnd();
     }
+    if ($this->filter !== null) {
+      if (!is_object($this->filter)) {
+        throw new \TProtocolException('Bad type in structure.', \TProtocolException::INVALID_DATA);
+      }
+      $xfer += $output->writeFieldBegin('filter', \TType::STRUCT, 3);
+      $xfer += $this->filter->write($output);
+      $xfer += $output->writeFieldEnd();
+    }
     $xfer += $output->writeFieldStop();
     $xfer += $output->writeStructEnd();
     return $xfer;
@@ -3381,6 +3120,8 @@ class RelatedResult {
   public $notes = null;
   public $notebooks = null;
   public $tags = null;
+  public $containingNotebooks = null;
+  public $debugInfo = null;
 
   public function __construct($vals=null) {
     if (!isset(self::$_TSPEC)) {
@@ -3412,6 +3153,19 @@ class RelatedResult {
             'class' => '\EDAM\Types\Tag',
             ),
           ),
+        4 => array(
+          'var' => 'containingNotebooks',
+          'type' => \TType::LST,
+          'etype' => \TType::STRUCT,
+          'elem' => array(
+            'type' => \TType::STRUCT,
+            'class' => '\EDAM\Types\NotebookDescriptor',
+            ),
+          ),
+        5 => array(
+          'var' => 'debugInfo',
+          'type' => \TType::STRING,
+          ),
         );
     }
     if (is_array($vals)) {
@@ -3423,6 +3177,12 @@ class RelatedResult {
       }
       if (isset($vals['tags'])) {
         $this->tags = $vals['tags'];
+      }
+      if (isset($vals['containingNotebooks'])) {
+        $this->containingNotebooks = $vals['containingNotebooks'];
+      }
+      if (isset($vals['debugInfo'])) {
+        $this->debugInfo = $vals['debugInfo'];
       }
     }
   }
@@ -3449,15 +3209,15 @@ class RelatedResult {
         case 1:
           if ($ftype == \TType::LST) {
             $this->notes = array();
-            $_size181 = 0;
-            $_etype184 = 0;
-            $xfer += $input->readListBegin($_etype184, $_size181);
-            for ($_i185 = 0; $_i185 < $_size181; ++$_i185)
+            $_size165 = 0;
+            $_etype168 = 0;
+            $xfer += $input->readListBegin($_etype168, $_size165);
+            for ($_i169 = 0; $_i169 < $_size165; ++$_i169)
             {
-              $elem186 = null;
-              $elem186 = new \EDAM\Types\Note();
-              $xfer += $elem186->read($input);
-              $this->notes []= $elem186;
+              $elem170 = null;
+              $elem170 = new \EDAM\Types\Note();
+              $xfer += $elem170->read($input);
+              $this->notes []= $elem170;
             }
             $xfer += $input->readListEnd();
           } else {
@@ -3467,15 +3227,15 @@ class RelatedResult {
         case 2:
           if ($ftype == \TType::LST) {
             $this->notebooks = array();
-            $_size187 = 0;
-            $_etype190 = 0;
-            $xfer += $input->readListBegin($_etype190, $_size187);
-            for ($_i191 = 0; $_i191 < $_size187; ++$_i191)
+            $_size171 = 0;
+            $_etype174 = 0;
+            $xfer += $input->readListBegin($_etype174, $_size171);
+            for ($_i175 = 0; $_i175 < $_size171; ++$_i175)
             {
-              $elem192 = null;
-              $elem192 = new \EDAM\Types\Notebook();
-              $xfer += $elem192->read($input);
-              $this->notebooks []= $elem192;
+              $elem176 = null;
+              $elem176 = new \EDAM\Types\Notebook();
+              $xfer += $elem176->read($input);
+              $this->notebooks []= $elem176;
             }
             $xfer += $input->readListEnd();
           } else {
@@ -3485,17 +3245,42 @@ class RelatedResult {
         case 3:
           if ($ftype == \TType::LST) {
             $this->tags = array();
-            $_size193 = 0;
-            $_etype196 = 0;
-            $xfer += $input->readListBegin($_etype196, $_size193);
-            for ($_i197 = 0; $_i197 < $_size193; ++$_i197)
+            $_size177 = 0;
+            $_etype180 = 0;
+            $xfer += $input->readListBegin($_etype180, $_size177);
+            for ($_i181 = 0; $_i181 < $_size177; ++$_i181)
             {
-              $elem198 = null;
-              $elem198 = new \EDAM\Types\Tag();
-              $xfer += $elem198->read($input);
-              $this->tags []= $elem198;
+              $elem182 = null;
+              $elem182 = new \EDAM\Types\Tag();
+              $xfer += $elem182->read($input);
+              $this->tags []= $elem182;
             }
             $xfer += $input->readListEnd();
+          } else {
+            $xfer += $input->skip($ftype);
+          }
+          break;
+        case 4:
+          if ($ftype == \TType::LST) {
+            $this->containingNotebooks = array();
+            $_size183 = 0;
+            $_etype186 = 0;
+            $xfer += $input->readListBegin($_etype186, $_size183);
+            for ($_i187 = 0; $_i187 < $_size183; ++$_i187)
+            {
+              $elem188 = null;
+              $elem188 = new \EDAM\Types\NotebookDescriptor();
+              $xfer += $elem188->read($input);
+              $this->containingNotebooks []= $elem188;
+            }
+            $xfer += $input->readListEnd();
+          } else {
+            $xfer += $input->skip($ftype);
+          }
+          break;
+        case 5:
+          if ($ftype == \TType::STRING) {
+            $xfer += $input->readString($this->debugInfo);
           } else {
             $xfer += $input->skip($ftype);
           }
@@ -3521,9 +3306,9 @@ class RelatedResult {
       {
         $output->writeListBegin(\TType::STRUCT, count($this->notes));
         {
-          foreach ($this->notes as $iter199)
+          foreach ($this->notes as $iter189)
           {
-            $xfer += $iter199->write($output);
+            $xfer += $iter189->write($output);
           }
         }
         $output->writeListEnd();
@@ -3538,9 +3323,9 @@ class RelatedResult {
       {
         $output->writeListBegin(\TType::STRUCT, count($this->notebooks));
         {
-          foreach ($this->notebooks as $iter200)
+          foreach ($this->notebooks as $iter190)
           {
-            $xfer += $iter200->write($output);
+            $xfer += $iter190->write($output);
           }
         }
         $output->writeListEnd();
@@ -3555,13 +3340,35 @@ class RelatedResult {
       {
         $output->writeListBegin(\TType::STRUCT, count($this->tags));
         {
-          foreach ($this->tags as $iter201)
+          foreach ($this->tags as $iter191)
           {
-            $xfer += $iter201->write($output);
+            $xfer += $iter191->write($output);
           }
         }
         $output->writeListEnd();
       }
+      $xfer += $output->writeFieldEnd();
+    }
+    if ($this->containingNotebooks !== null) {
+      if (!is_array($this->containingNotebooks)) {
+        throw new \TProtocolException('Bad type in structure.', \TProtocolException::INVALID_DATA);
+      }
+      $xfer += $output->writeFieldBegin('containingNotebooks', \TType::LST, 4);
+      {
+        $output->writeListBegin(\TType::STRUCT, count($this->containingNotebooks));
+        {
+          foreach ($this->containingNotebooks as $iter192)
+          {
+            $xfer += $iter192->write($output);
+          }
+        }
+        $output->writeListEnd();
+      }
+      $xfer += $output->writeFieldEnd();
+    }
+    if ($this->debugInfo !== null) {
+      $xfer += $output->writeFieldBegin('debugInfo', \TType::STRING, 5);
+      $xfer += $output->writeString($this->debugInfo);
       $xfer += $output->writeFieldEnd();
     }
     $xfer += $output->writeFieldStop();
@@ -3577,6 +3384,9 @@ class RelatedResultSpec {
   public $maxNotes = null;
   public $maxNotebooks = null;
   public $maxTags = null;
+  public $writableNotebooksOnly = null;
+  public $includeContainingNotebooks = null;
+  public $includeDebugInfo = null;
 
   public function __construct($vals=null) {
     if (!isset(self::$_TSPEC)) {
@@ -3593,6 +3403,18 @@ class RelatedResultSpec {
           'var' => 'maxTags',
           'type' => \TType::I32,
           ),
+        4 => array(
+          'var' => 'writableNotebooksOnly',
+          'type' => \TType::BOOL,
+          ),
+        5 => array(
+          'var' => 'includeContainingNotebooks',
+          'type' => \TType::BOOL,
+          ),
+        6 => array(
+          'var' => 'includeDebugInfo',
+          'type' => \TType::BOOL,
+          ),
         );
     }
     if (is_array($vals)) {
@@ -3604,6 +3426,15 @@ class RelatedResultSpec {
       }
       if (isset($vals['maxTags'])) {
         $this->maxTags = $vals['maxTags'];
+      }
+      if (isset($vals['writableNotebooksOnly'])) {
+        $this->writableNotebooksOnly = $vals['writableNotebooksOnly'];
+      }
+      if (isset($vals['includeContainingNotebooks'])) {
+        $this->includeContainingNotebooks = $vals['includeContainingNotebooks'];
+      }
+      if (isset($vals['includeDebugInfo'])) {
+        $this->includeDebugInfo = $vals['includeDebugInfo'];
       }
     }
   }
@@ -3648,6 +3479,27 @@ class RelatedResultSpec {
             $xfer += $input->skip($ftype);
           }
           break;
+        case 4:
+          if ($ftype == \TType::BOOL) {
+            $xfer += $input->readBool($this->writableNotebooksOnly);
+          } else {
+            $xfer += $input->skip($ftype);
+          }
+          break;
+        case 5:
+          if ($ftype == \TType::BOOL) {
+            $xfer += $input->readBool($this->includeContainingNotebooks);
+          } else {
+            $xfer += $input->skip($ftype);
+          }
+          break;
+        case 6:
+          if ($ftype == \TType::BOOL) {
+            $xfer += $input->readBool($this->includeDebugInfo);
+          } else {
+            $xfer += $input->skip($ftype);
+          }
+          break;
         default:
           $xfer += $input->skip($ftype);
           break;
@@ -3674,6 +3526,21 @@ class RelatedResultSpec {
     if ($this->maxTags !== null) {
       $xfer += $output->writeFieldBegin('maxTags', \TType::I32, 3);
       $xfer += $output->writeI32($this->maxTags);
+      $xfer += $output->writeFieldEnd();
+    }
+    if ($this->writableNotebooksOnly !== null) {
+      $xfer += $output->writeFieldBegin('writableNotebooksOnly', \TType::BOOL, 4);
+      $xfer += $output->writeBool($this->writableNotebooksOnly);
+      $xfer += $output->writeFieldEnd();
+    }
+    if ($this->includeContainingNotebooks !== null) {
+      $xfer += $output->writeFieldBegin('includeContainingNotebooks', \TType::BOOL, 5);
+      $xfer += $output->writeBool($this->includeContainingNotebooks);
+      $xfer += $output->writeFieldEnd();
+    }
+    if ($this->includeDebugInfo !== null) {
+      $xfer += $output->writeFieldBegin('includeDebugInfo', \TType::BOOL, 6);
+      $xfer += $output->writeBool($this->includeDebugInfo);
       $xfer += $output->writeFieldEnd();
     }
     $xfer += $output->writeFieldStop();

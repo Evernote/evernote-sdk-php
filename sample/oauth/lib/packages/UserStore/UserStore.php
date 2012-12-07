@@ -14,6 +14,8 @@ interface UserStoreIf {
   public function checkVersion($clientName, $edamVersionMajor, $edamVersionMinor);
   public function getBootstrapInfo($locale);
   public function authenticate($username, $password, $consumerKey, $consumerSecret);
+  public function authenticateLongSession($username, $password, $consumerKey, $consumerSecret, $deviceIdentifier, $deviceDescription);
+  public function authenticateToBusiness($authenticationToken);
   public function refreshAuthentication($authenticationToken);
   public function getUser($authenticationToken);
   public function getPublicUserInfo($username);
@@ -194,6 +196,125 @@ class UserStoreClient implements \EDAM\UserStore\UserStoreIf {
       throw $result->systemException;
     }
     throw new \Exception("authenticate failed: unknown result");
+  }
+
+  public function authenticateLongSession($username, $password, $consumerKey, $consumerSecret, $deviceIdentifier, $deviceDescription)
+  {
+    $this->send_authenticateLongSession($username, $password, $consumerKey, $consumerSecret, $deviceIdentifier, $deviceDescription);
+    return $this->recv_authenticateLongSession();
+  }
+
+  public function send_authenticateLongSession($username, $password, $consumerKey, $consumerSecret, $deviceIdentifier, $deviceDescription)
+  {
+    $args = new \EDAM\UserStore\UserStore_authenticateLongSession_args();
+    $args->username = $username;
+    $args->password = $password;
+    $args->consumerKey = $consumerKey;
+    $args->consumerSecret = $consumerSecret;
+    $args->deviceIdentifier = $deviceIdentifier;
+    $args->deviceDescription = $deviceDescription;
+    $bin_accel = ($this->output_ instanceof \TProtocol::$TBINARYPROTOCOLACCELERATED) && function_exists('thrift_protocol_write_binary');
+    if ($bin_accel)
+    {
+      thrift_protocol_write_binary($this->output_, 'authenticateLongSession', \TMessageType::CALL, $args, $this->seqid_, $this->output_->isStrictWrite());
+    }
+    else
+    {
+      $this->output_->writeMessageBegin('authenticateLongSession', \TMessageType::CALL, $this->seqid_);
+      $args->write($this->output_);
+      $this->output_->writeMessageEnd();
+      $this->output_->getTransport()->flush();
+    }
+  }
+
+  public function recv_authenticateLongSession()
+  {
+    $bin_accel = ($this->input_ instanceof \TProtocol::$TBINARYPROTOCOLACCELERATED) && function_exists('thrift_protocol_read_binary');
+    if ($bin_accel) $result = thrift_protocol_read_binary($this->input_, '\EDAM\UserStore\UserStore_authenticateLongSession_result', $this->input_->isStrictRead());
+    else
+    {
+      $rseqid = 0;
+      $fname = null;
+      $mtype = 0;
+
+      $this->input_->readMessageBegin($fname, $mtype, $rseqid);
+      if ($mtype == \TMessageType::EXCEPTION) {
+        $x = new \TApplicationException();
+        $x->read($this->input_);
+        $this->input_->readMessageEnd();
+        throw $x;
+      }
+      $result = new \EDAM\UserStore\UserStore_authenticateLongSession_result();
+      $result->read($this->input_);
+      $this->input_->readMessageEnd();
+    }
+    if ($result->success !== null) {
+      return $result->success;
+    }
+    if ($result->userException !== null) {
+      throw $result->userException;
+    }
+    if ($result->systemException !== null) {
+      throw $result->systemException;
+    }
+    throw new \Exception("authenticateLongSession failed: unknown result");
+  }
+
+  public function authenticateToBusiness($authenticationToken)
+  {
+    $this->send_authenticateToBusiness($authenticationToken);
+    return $this->recv_authenticateToBusiness();
+  }
+
+  public function send_authenticateToBusiness($authenticationToken)
+  {
+    $args = new \EDAM\UserStore\UserStore_authenticateToBusiness_args();
+    $args->authenticationToken = $authenticationToken;
+    $bin_accel = ($this->output_ instanceof \TProtocol::$TBINARYPROTOCOLACCELERATED) && function_exists('thrift_protocol_write_binary');
+    if ($bin_accel)
+    {
+      thrift_protocol_write_binary($this->output_, 'authenticateToBusiness', \TMessageType::CALL, $args, $this->seqid_, $this->output_->isStrictWrite());
+    }
+    else
+    {
+      $this->output_->writeMessageBegin('authenticateToBusiness', \TMessageType::CALL, $this->seqid_);
+      $args->write($this->output_);
+      $this->output_->writeMessageEnd();
+      $this->output_->getTransport()->flush();
+    }
+  }
+
+  public function recv_authenticateToBusiness()
+  {
+    $bin_accel = ($this->input_ instanceof \TProtocol::$TBINARYPROTOCOLACCELERATED) && function_exists('thrift_protocol_read_binary');
+    if ($bin_accel) $result = thrift_protocol_read_binary($this->input_, '\EDAM\UserStore\UserStore_authenticateToBusiness_result', $this->input_->isStrictRead());
+    else
+    {
+      $rseqid = 0;
+      $fname = null;
+      $mtype = 0;
+
+      $this->input_->readMessageBegin($fname, $mtype, $rseqid);
+      if ($mtype == \TMessageType::EXCEPTION) {
+        $x = new \TApplicationException();
+        $x->read($this->input_);
+        $this->input_->readMessageEnd();
+        throw $x;
+      }
+      $result = new \EDAM\UserStore\UserStore_authenticateToBusiness_result();
+      $result->read($this->input_);
+      $this->input_->readMessageEnd();
+    }
+    if ($result->success !== null) {
+      return $result->success;
+    }
+    if ($result->userException !== null) {
+      throw $result->userException;
+    }
+    if ($result->systemException !== null) {
+      throw $result->systemException;
+    }
+    throw new \Exception("authenticateToBusiness failed: unknown result");
   }
 
   public function refreshAuthentication($authenticationToken)
@@ -493,7 +614,7 @@ class UserStore_checkVersion_args {
 
   public $clientName = null;
   public $edamVersionMajor = 1;
-  public $edamVersionMinor = 22;
+  public $edamVersionMinor = 23;
 
   public function __construct($vals=null) {
     if (!isset(self::$_TSPEC)) {
@@ -1049,6 +1170,492 @@ class UserStore_authenticate_result {
   public function write($output) {
     $xfer = 0;
     $xfer += $output->writeStructBegin('UserStore_authenticate_result');
+    if ($this->success !== null) {
+      if (!is_object($this->success)) {
+        throw new \TProtocolException('Bad type in structure.', \TProtocolException::INVALID_DATA);
+      }
+      $xfer += $output->writeFieldBegin('success', \TType::STRUCT, 0);
+      $xfer += $this->success->write($output);
+      $xfer += $output->writeFieldEnd();
+    }
+    if ($this->userException !== null) {
+      $xfer += $output->writeFieldBegin('userException', \TType::STRUCT, 1);
+      $xfer += $this->userException->write($output);
+      $xfer += $output->writeFieldEnd();
+    }
+    if ($this->systemException !== null) {
+      $xfer += $output->writeFieldBegin('systemException', \TType::STRUCT, 2);
+      $xfer += $this->systemException->write($output);
+      $xfer += $output->writeFieldEnd();
+    }
+    $xfer += $output->writeFieldStop();
+    $xfer += $output->writeStructEnd();
+    return $xfer;
+  }
+
+}
+
+class UserStore_authenticateLongSession_args {
+  static $_TSPEC;
+
+  public $username = null;
+  public $password = null;
+  public $consumerKey = null;
+  public $consumerSecret = null;
+  public $deviceIdentifier = null;
+  public $deviceDescription = null;
+
+  public function __construct($vals=null) {
+    if (!isset(self::$_TSPEC)) {
+      self::$_TSPEC = array(
+        1 => array(
+          'var' => 'username',
+          'type' => \TType::STRING,
+          ),
+        2 => array(
+          'var' => 'password',
+          'type' => \TType::STRING,
+          ),
+        3 => array(
+          'var' => 'consumerKey',
+          'type' => \TType::STRING,
+          ),
+        4 => array(
+          'var' => 'consumerSecret',
+          'type' => \TType::STRING,
+          ),
+        5 => array(
+          'var' => 'deviceIdentifier',
+          'type' => \TType::STRING,
+          ),
+        6 => array(
+          'var' => 'deviceDescription',
+          'type' => \TType::STRING,
+          ),
+        );
+    }
+    if (is_array($vals)) {
+      if (isset($vals['username'])) {
+        $this->username = $vals['username'];
+      }
+      if (isset($vals['password'])) {
+        $this->password = $vals['password'];
+      }
+      if (isset($vals['consumerKey'])) {
+        $this->consumerKey = $vals['consumerKey'];
+      }
+      if (isset($vals['consumerSecret'])) {
+        $this->consumerSecret = $vals['consumerSecret'];
+      }
+      if (isset($vals['deviceIdentifier'])) {
+        $this->deviceIdentifier = $vals['deviceIdentifier'];
+      }
+      if (isset($vals['deviceDescription'])) {
+        $this->deviceDescription = $vals['deviceDescription'];
+      }
+    }
+  }
+
+  public function getName() {
+    return 'UserStore_authenticateLongSession_args';
+  }
+
+  public function read($input)
+  {
+    $xfer = 0;
+    $fname = null;
+    $ftype = 0;
+    $fid = 0;
+    $xfer += $input->readStructBegin($fname);
+    while (true)
+    {
+      $xfer += $input->readFieldBegin($fname, $ftype, $fid);
+      if ($ftype == \TType::STOP) {
+        break;
+      }
+      switch ($fid)
+      {
+        case 1:
+          if ($ftype == \TType::STRING) {
+            $xfer += $input->readString($this->username);
+          } else {
+            $xfer += $input->skip($ftype);
+          }
+          break;
+        case 2:
+          if ($ftype == \TType::STRING) {
+            $xfer += $input->readString($this->password);
+          } else {
+            $xfer += $input->skip($ftype);
+          }
+          break;
+        case 3:
+          if ($ftype == \TType::STRING) {
+            $xfer += $input->readString($this->consumerKey);
+          } else {
+            $xfer += $input->skip($ftype);
+          }
+          break;
+        case 4:
+          if ($ftype == \TType::STRING) {
+            $xfer += $input->readString($this->consumerSecret);
+          } else {
+            $xfer += $input->skip($ftype);
+          }
+          break;
+        case 5:
+          if ($ftype == \TType::STRING) {
+            $xfer += $input->readString($this->deviceIdentifier);
+          } else {
+            $xfer += $input->skip($ftype);
+          }
+          break;
+        case 6:
+          if ($ftype == \TType::STRING) {
+            $xfer += $input->readString($this->deviceDescription);
+          } else {
+            $xfer += $input->skip($ftype);
+          }
+          break;
+        default:
+          $xfer += $input->skip($ftype);
+          break;
+      }
+      $xfer += $input->readFieldEnd();
+    }
+    $xfer += $input->readStructEnd();
+    return $xfer;
+  }
+
+  public function write($output) {
+    $xfer = 0;
+    $xfer += $output->writeStructBegin('UserStore_authenticateLongSession_args');
+    if ($this->username !== null) {
+      $xfer += $output->writeFieldBegin('username', \TType::STRING, 1);
+      $xfer += $output->writeString($this->username);
+      $xfer += $output->writeFieldEnd();
+    }
+    if ($this->password !== null) {
+      $xfer += $output->writeFieldBegin('password', \TType::STRING, 2);
+      $xfer += $output->writeString($this->password);
+      $xfer += $output->writeFieldEnd();
+    }
+    if ($this->consumerKey !== null) {
+      $xfer += $output->writeFieldBegin('consumerKey', \TType::STRING, 3);
+      $xfer += $output->writeString($this->consumerKey);
+      $xfer += $output->writeFieldEnd();
+    }
+    if ($this->consumerSecret !== null) {
+      $xfer += $output->writeFieldBegin('consumerSecret', \TType::STRING, 4);
+      $xfer += $output->writeString($this->consumerSecret);
+      $xfer += $output->writeFieldEnd();
+    }
+    if ($this->deviceIdentifier !== null) {
+      $xfer += $output->writeFieldBegin('deviceIdentifier', \TType::STRING, 5);
+      $xfer += $output->writeString($this->deviceIdentifier);
+      $xfer += $output->writeFieldEnd();
+    }
+    if ($this->deviceDescription !== null) {
+      $xfer += $output->writeFieldBegin('deviceDescription', \TType::STRING, 6);
+      $xfer += $output->writeString($this->deviceDescription);
+      $xfer += $output->writeFieldEnd();
+    }
+    $xfer += $output->writeFieldStop();
+    $xfer += $output->writeStructEnd();
+    return $xfer;
+  }
+
+}
+
+class UserStore_authenticateLongSession_result {
+  static $_TSPEC;
+
+  public $success = null;
+  public $userException = null;
+  public $systemException = null;
+
+  public function __construct($vals=null) {
+    if (!isset(self::$_TSPEC)) {
+      self::$_TSPEC = array(
+        0 => array(
+          'var' => 'success',
+          'type' => \TType::STRUCT,
+          'class' => '\EDAM\UserStore\AuthenticationResult',
+          ),
+        1 => array(
+          'var' => 'userException',
+          'type' => \TType::STRUCT,
+          'class' => '\EDAM\Error\EDAMUserException',
+          ),
+        2 => array(
+          'var' => 'systemException',
+          'type' => \TType::STRUCT,
+          'class' => '\EDAM\Error\EDAMSystemException',
+          ),
+        );
+    }
+    if (is_array($vals)) {
+      if (isset($vals['success'])) {
+        $this->success = $vals['success'];
+      }
+      if (isset($vals['userException'])) {
+        $this->userException = $vals['userException'];
+      }
+      if (isset($vals['systemException'])) {
+        $this->systemException = $vals['systemException'];
+      }
+    }
+  }
+
+  public function getName() {
+    return 'UserStore_authenticateLongSession_result';
+  }
+
+  public function read($input)
+  {
+    $xfer = 0;
+    $fname = null;
+    $ftype = 0;
+    $fid = 0;
+    $xfer += $input->readStructBegin($fname);
+    while (true)
+    {
+      $xfer += $input->readFieldBegin($fname, $ftype, $fid);
+      if ($ftype == \TType::STOP) {
+        break;
+      }
+      switch ($fid)
+      {
+        case 0:
+          if ($ftype == \TType::STRUCT) {
+            $this->success = new \EDAM\UserStore\AuthenticationResult();
+            $xfer += $this->success->read($input);
+          } else {
+            $xfer += $input->skip($ftype);
+          }
+          break;
+        case 1:
+          if ($ftype == \TType::STRUCT) {
+            $this->userException = new \EDAM\Error\EDAMUserException();
+            $xfer += $this->userException->read($input);
+          } else {
+            $xfer += $input->skip($ftype);
+          }
+          break;
+        case 2:
+          if ($ftype == \TType::STRUCT) {
+            $this->systemException = new \EDAM\Error\EDAMSystemException();
+            $xfer += $this->systemException->read($input);
+          } else {
+            $xfer += $input->skip($ftype);
+          }
+          break;
+        default:
+          $xfer += $input->skip($ftype);
+          break;
+      }
+      $xfer += $input->readFieldEnd();
+    }
+    $xfer += $input->readStructEnd();
+    return $xfer;
+  }
+
+  public function write($output) {
+    $xfer = 0;
+    $xfer += $output->writeStructBegin('UserStore_authenticateLongSession_result');
+    if ($this->success !== null) {
+      if (!is_object($this->success)) {
+        throw new \TProtocolException('Bad type in structure.', \TProtocolException::INVALID_DATA);
+      }
+      $xfer += $output->writeFieldBegin('success', \TType::STRUCT, 0);
+      $xfer += $this->success->write($output);
+      $xfer += $output->writeFieldEnd();
+    }
+    if ($this->userException !== null) {
+      $xfer += $output->writeFieldBegin('userException', \TType::STRUCT, 1);
+      $xfer += $this->userException->write($output);
+      $xfer += $output->writeFieldEnd();
+    }
+    if ($this->systemException !== null) {
+      $xfer += $output->writeFieldBegin('systemException', \TType::STRUCT, 2);
+      $xfer += $this->systemException->write($output);
+      $xfer += $output->writeFieldEnd();
+    }
+    $xfer += $output->writeFieldStop();
+    $xfer += $output->writeStructEnd();
+    return $xfer;
+  }
+
+}
+
+class UserStore_authenticateToBusiness_args {
+  static $_TSPEC;
+
+  public $authenticationToken = null;
+
+  public function __construct($vals=null) {
+    if (!isset(self::$_TSPEC)) {
+      self::$_TSPEC = array(
+        1 => array(
+          'var' => 'authenticationToken',
+          'type' => \TType::STRING,
+          ),
+        );
+    }
+    if (is_array($vals)) {
+      if (isset($vals['authenticationToken'])) {
+        $this->authenticationToken = $vals['authenticationToken'];
+      }
+    }
+  }
+
+  public function getName() {
+    return 'UserStore_authenticateToBusiness_args';
+  }
+
+  public function read($input)
+  {
+    $xfer = 0;
+    $fname = null;
+    $ftype = 0;
+    $fid = 0;
+    $xfer += $input->readStructBegin($fname);
+    while (true)
+    {
+      $xfer += $input->readFieldBegin($fname, $ftype, $fid);
+      if ($ftype == \TType::STOP) {
+        break;
+      }
+      switch ($fid)
+      {
+        case 1:
+          if ($ftype == \TType::STRING) {
+            $xfer += $input->readString($this->authenticationToken);
+          } else {
+            $xfer += $input->skip($ftype);
+          }
+          break;
+        default:
+          $xfer += $input->skip($ftype);
+          break;
+      }
+      $xfer += $input->readFieldEnd();
+    }
+    $xfer += $input->readStructEnd();
+    return $xfer;
+  }
+
+  public function write($output) {
+    $xfer = 0;
+    $xfer += $output->writeStructBegin('UserStore_authenticateToBusiness_args');
+    if ($this->authenticationToken !== null) {
+      $xfer += $output->writeFieldBegin('authenticationToken', \TType::STRING, 1);
+      $xfer += $output->writeString($this->authenticationToken);
+      $xfer += $output->writeFieldEnd();
+    }
+    $xfer += $output->writeFieldStop();
+    $xfer += $output->writeStructEnd();
+    return $xfer;
+  }
+
+}
+
+class UserStore_authenticateToBusiness_result {
+  static $_TSPEC;
+
+  public $success = null;
+  public $userException = null;
+  public $systemException = null;
+
+  public function __construct($vals=null) {
+    if (!isset(self::$_TSPEC)) {
+      self::$_TSPEC = array(
+        0 => array(
+          'var' => 'success',
+          'type' => \TType::STRUCT,
+          'class' => '\EDAM\UserStore\AuthenticationResult',
+          ),
+        1 => array(
+          'var' => 'userException',
+          'type' => \TType::STRUCT,
+          'class' => '\EDAM\Error\EDAMUserException',
+          ),
+        2 => array(
+          'var' => 'systemException',
+          'type' => \TType::STRUCT,
+          'class' => '\EDAM\Error\EDAMSystemException',
+          ),
+        );
+    }
+    if (is_array($vals)) {
+      if (isset($vals['success'])) {
+        $this->success = $vals['success'];
+      }
+      if (isset($vals['userException'])) {
+        $this->userException = $vals['userException'];
+      }
+      if (isset($vals['systemException'])) {
+        $this->systemException = $vals['systemException'];
+      }
+    }
+  }
+
+  public function getName() {
+    return 'UserStore_authenticateToBusiness_result';
+  }
+
+  public function read($input)
+  {
+    $xfer = 0;
+    $fname = null;
+    $ftype = 0;
+    $fid = 0;
+    $xfer += $input->readStructBegin($fname);
+    while (true)
+    {
+      $xfer += $input->readFieldBegin($fname, $ftype, $fid);
+      if ($ftype == \TType::STOP) {
+        break;
+      }
+      switch ($fid)
+      {
+        case 0:
+          if ($ftype == \TType::STRUCT) {
+            $this->success = new \EDAM\UserStore\AuthenticationResult();
+            $xfer += $this->success->read($input);
+          } else {
+            $xfer += $input->skip($ftype);
+          }
+          break;
+        case 1:
+          if ($ftype == \TType::STRUCT) {
+            $this->userException = new \EDAM\Error\EDAMUserException();
+            $xfer += $this->userException->read($input);
+          } else {
+            $xfer += $input->skip($ftype);
+          }
+          break;
+        case 2:
+          if ($ftype == \TType::STRUCT) {
+            $this->systemException = new \EDAM\Error\EDAMSystemException();
+            $xfer += $this->systemException->read($input);
+          } else {
+            $xfer += $input->skip($ftype);
+          }
+          break;
+        default:
+          $xfer += $input->skip($ftype);
+          break;
+      }
+      $xfer += $input->readFieldEnd();
+    }
+    $xfer += $input->readStructEnd();
+    return $xfer;
+  }
+
+  public function write($output) {
+    $xfer = 0;
+    $xfer += $output->writeStructBegin('UserStore_authenticateToBusiness_result');
     if ($this->success !== null) {
       if (!is_object($this->success)) {
         throw new \TProtocolException('Bad type in structure.', \TProtocolException::INVALID_DATA);
@@ -1760,7 +2367,7 @@ class UserStore_getPremiumInfo_result {
         0 => array(
           'var' => 'success',
           'type' => \TType::STRUCT,
-          'class' => '\EDAM\UserStore\PremiumInfo',
+          'class' => '\EDAM\Types\PremiumInfo',
           ),
         1 => array(
           'var' => 'userException',
@@ -1808,7 +2415,7 @@ class UserStore_getPremiumInfo_result {
       {
         case 0:
           if ($ftype == \TType::STRUCT) {
-            $this->success = new \EDAM\UserStore\PremiumInfo();
+            $this->success = new \EDAM\Types\PremiumInfo();
             $xfer += $this->success->read($input);
           } else {
             $xfer += $input->skip($ftype);
