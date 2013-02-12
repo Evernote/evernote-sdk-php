@@ -1,0 +1,23 @@
+{
+  "name": "evernote/evernote",
+  "description": "Evernote PHP SDK",
+  "keywords": [
+    "evernote",
+    "api",
+    "sdk"
+  ],
+  "homepage": "https://github.com/evernote/evernote-sdk-php",
+  "license": "Apache",
+  "authors": [
+    {
+      "name": "Evernote and contributors",
+      "homepage": "https://github.com/evernote/evernote-sdk-php/contributors"
+    }
+  ],
+  "autoload": {
+    "classmap": ["lib/"]
+  },
+  "require": {
+    "php": ">=5.3"
+  }
+}
