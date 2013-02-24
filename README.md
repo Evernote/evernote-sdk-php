@@ -70,7 +70,7 @@ Usage
 -----
 ### OAuth ###
 ```php
-$client = new Evernote\Client.new(array(
+$client = new Evernote\Client(array(
   'consumerKey' => 'YOUR CONSUMER KEY',
   'consumerSecret' => 'YOUR CONSUMER SECRET'
 ));
@@ -89,7 +89,7 @@ $accessToken = $client->getAccessToken(
 Now you can make other API calls
 ```php
 $token = $accessToken['oauth_token'];
-$client = new Evernote\Client.new(array('token' => $token));
+$client = new Evernote\Client(array('token' => $token));
 $noteStore = $client->getNoteStore();
 $notebooks = $noteStore->listNotebooks();
 ```
@@ -97,7 +97,7 @@ $notebooks = $noteStore->listNotebooks();
 ### UserStore ###
 Once you acquire token, you can use UserStore. For example, if you want to call UserStore.getUser:
 ```php
-$client = new Evernote\Client.new(array('token' => $token));
+$client = new Evernote\Client(array('token' => $token));
 $userStore = $client->getUserStore();
 $userStore->getUser();
 ```
