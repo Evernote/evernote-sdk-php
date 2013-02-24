@@ -39,3 +39,90 @@ Web applications must use OAuth to authenticate to the Evernote service. The cod
 4. Load the web application in your browser (e.g. http://localhost/oauth)
 
 There are two pages in the sample. index.php demonstrates each step of the OAuth process in detail. This is useful for developers, but not what an end user would see. sampleApp.php demonstrates the simplified process, which is similar to what you would implement in your production app.
+
+Installing SDK using Composer
+-----------------------------
+Using [Composer](http://getcomposer.org) is one of the options to install Evernote SDK for PHP.
+
+1. Add `"evernote/evernote"` as a dependency in your project's `composer.json` file.
+
+    ```json
+    {
+        "require": {
+            "evernote/evernote": "1.23.*"
+        }
+    }
+    ```
+
+1. Download and install Composer.
+
+    curl -s "http://getcomposer.org/installer" | php
+
+1. Install your dependencies.
+
+    php composer.phar install
+
+1. Require Composer's autoloader by adding the following line to your code's bootstrap process.
+
+    require '/path/to/sdk/vendor/autoload.php';
+
+Usage
+-----
+### OAuth ###
+```php
+$client = new Evernote\Client.new(array(
+  'consumerKey' => 'YOUR CONSUMER KEY',
+  'consumerSecret' => 'YOUR CONSUMER SECRET'
+));
+$requestToken = $client->getRequestToken('YOUR CALLBACK URL');
+$authorizeUrl = $client->getAuthorizeUrl($requestToken);
+ => https://sandbox.evernote.com/OAuth.action?oauth_token=OAUTH_TOKEN
+```
+To obtain the access token
+```php
+$accessToken = $client->getAccessToken(
+  $requestToken['oauth_token'],
+  $requestToken['oauth_token_secret'],
+  $_GET['oauth_verifier']
+);
+```
+Now you can make other API calls
+```php
+$token = $accessToken['oauth_token'];
+$client = new Evernote\Client.new(array('token' => $token));
+$noteStore = $client->getNoteStore();
+$notebooks = $noteStore->listNotebooks();
+```
+
+### UserStore ###
+Once you acquire token, you can use UserStore. For example, if you want to call UserStore.getUser:
+```php
+$client = new Evernote\Client.new(array('token' => $token));
+$userStore = $client->getUserStore();
+$userStore->getUser();
+```
+You can omit authenticationToken in the arguments of UserStore/NoteStore functions.
+
+### NoteStore ###
+If you want to call NoteStore.listNotebooks:
+```php
+$noteStore = $client->getNoteStore();
+$noteStore->listNotebooks();
+```
+
+### NoteStore for linked notebooks ###
+If you want to get tags for linked notebooks:
+```php
+$linkedNotebooks = $noteStore->listLinkedNotebooks;
+$linkedNotebook = $linkedNotebooks[0];
+$sharedNoteStore = $client->sharedNoteStore($linkedNotebook);
+$sharedNotebook = $sharedNoteStore->getSharedNotebookByAuth();
+$sharedNoteStore->listTagsByNotebook($sharedNotebook->notebookGuid);
+```
+
+### NoteStore for Business ###
+If you want to get the list of notebooks in your business account:
+```php
+$businessNoteStore = $client->getBusinessNoteStore();
+$businessNoteStore->listNotebooks();
+```

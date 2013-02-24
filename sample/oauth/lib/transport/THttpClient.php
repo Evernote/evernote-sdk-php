@@ -78,6 +78,11 @@ class THttpClient extends TTransport {
   protected $timeout_;
 
   /**
+   * http headers
+   **/
+  protected $headers_;
+
+  /**
    * Make a new HTTP client.
    *
    * @param string $host
@@ -95,6 +100,8 @@ class THttpClient extends TTransport {
     $this->buf_ = '';
     $this->handle_ = null;
     $this->timeout_ = null;
+
+    $this->headers_ = array();
   }
 
   /**
@@ -171,11 +178,15 @@ class THttpClient extends TTransport {
     // God, PHP really has some esoteric ways of doing simple things.
     $host = $this->host_.($this->port_ != 80 ? ':'.$this->port_ : '');
 
-    $headers = array('Host: '.$host,
-                     'Accept: application/x-thrift',
-                     'User-Agent: PHP/THttpClient',
-                     'Content-Type: application/x-thrift',
-                     'Content-Length: '.strlen($this->buf_));
+    $headers = array();
+    $defaultHeaders = array('Host' => $host,
+      'Accept' => 'application/x-thrift',
+      'User-Agent' => 'PHP/THttpClient',
+      'Content-Type' => 'application/x-thrift',
+      'Content-Length' => strlen($this->buf_));
+    foreach (($this->headers_ + $defaultHeaders) as $key => $value) {
+      $headers[] = "$key: $value";
+    }
 
     $options = array('method' => 'POST', 'protocol_version' => 1.1,
                      'header' => implode("\r\n", $headers),
@@ -195,6 +206,10 @@ class THttpClient extends TTransport {
       $error = 'THttpClient: Could not connect to '.$host.$this->uri_;
       throw new TTransportException($error, TTransportException::NOT_OPEN);
     }
+  }
+
+  public function addHeaders($headers) {
+    $this->headers_ += $headers;
   }
 
 }
