@@ -83,7 +83,7 @@ class Client
         return new Store($this->token, '\EDAM\NoteStore\NoteStoreClient', $noteStoreUrl);
     }
 
-    public function getSharedNoteStore($linkedNoteBook)
+    public function getSharedNoteStore()
     {
         $userStore = $this->getUserStore();
         $bizAuth = $userStore->authenticateToBusiness();
@@ -93,7 +93,7 @@ class Client
         return new Store($bizToken, '\EDAM\NoteStore\NoteStoreClient', $noteStoreUrl);
     }
 
-    public function getBusinessNoteStore()
+    public function getBusinessNoteStore($linkedNotebook)
     {
         $noteStoreUrl = $linkedNotebook->noteStoreUrl;
         $noteStore = new Store($this->token, '\EDAM\NoteStore\NoteStoreClient', $noteStoreUrl);
