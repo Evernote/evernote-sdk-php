@@ -15,7 +15,6 @@ use EDAM\Error\EDAMUserException, EDAM\Error\EDAMErrorCode;
 use Evernote\Client;
 
 ini_set("include_path", ini_get("include_path") . PATH_SEPARATOR . "../../lib" . PATH_SEPARATOR);
-require_once 'autoload.php';
 
 require_once 'Evernote/Client.php';
 
