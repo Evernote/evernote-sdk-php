@@ -2,14 +2,11 @@
 
 namespace Evernote;
 
-require_once dirname(__DIR__)."/Thrift.php";
-require_once dirname(__DIR__)."/transport/TTransport.php";
-require_once dirname(__DIR__)."/transport/THttpClient.php";
-require_once dirname(__DIR__)."/protocol/TProtocol.php";
-require_once dirname(__DIR__)."/protocol/TBinaryProtocol.php";
-require_once dirname(__DIR__)."/packages/UserStore/UserStore.php";
-require_once dirname(__DIR__)."/packages/UserStore/UserStore_constants.php";
-require_once dirname(__DIR__)."/packages/NoteStore/NoteStore.php";
+use Thrift\Transport\THttpClient;
+use Thrift\Protocol\TBinaryProtocol;
+use EDAM\UserStore\UserStoreClient;
+use EDAM\NoteStore\NotesStoreClient;
+use EDAM\UserStore\Constants as UserStoreConstants;
 
 class Client
 {
@@ -168,19 +165,19 @@ class Store
             }
         }
 
-        $httpClient = new \THttpClient(
+        $httpClient = new THttpClient(
             $parts['host'], $parts['port'], $parts['path'], $parts['scheme']);
         $httpClient->addHeaders(
             array('User-Agent' => $this->userAgentId.' / '.$this->getSdkVersion().'; PHP / '.phpversion()));
-        $thriftProtocol = new \TBinaryProtocol($httpClient);
+        $thriftProtocol = new TBinaryProtocol($httpClient);
 
         return new $clientClass($thriftProtocol, $thriftProtocol);
     }
 
     protected function getSdkVersion()
     {
-        $version = $GLOBALS['EDAM_UserStore_UserStore_CONSTANTS']['EDAM_VERSION_MAJOR']
-            .'.'.$GLOBALS['EDAM_UserStore_UserStore_CONSTANTS']['EDAM_VERSION_MINOR'];
+        $version = UserStoreConstants::$EDAM_VERSION_MAJOR
+            .'.'.UserStoreConstants::$EDAM_VERSION_MINOR;
 
         return $version;
     }
