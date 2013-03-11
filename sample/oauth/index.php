@@ -25,6 +25,8 @@
      * Access Token and Secret     token credentials
      */
 
+    require_once __DIR__ . '/lib/autoload.php';
+
     // Include our configuration settings
     require_once 'config.php';
 
