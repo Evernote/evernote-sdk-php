@@ -11,16 +11,20 @@
 
 // Import the classes that we're going to be using
 use EDAM\Types\Data, EDAM\Types\Note, EDAM\Types\Resource, EDAM\Types\ResourceAttributes;
+use EDAM\Limits\Constants as LimitsConstants;
+use EDAM\Error\EDAMSystemException;
+use Thrift\ClassLoader\ThriftClassLoader;
 use EDAM\Error\EDAMUserException, EDAM\Error\EDAMErrorCode;
 use Evernote\Client;
+use EDAM\UserStore\Constants as UserStoreConstants;
 
-ini_set("include_path", ini_get("include_path") . PATH_SEPARATOR . "../../lib" . PATH_SEPARATOR);
+require_once __DIR__.'/../../lib/Thrift/ClassLoader/ThriftClassLoader.php';
 
-require_once 'Evernote/Client.php';
-
-require_once 'packages/Errors/Errors_types.php';
-require_once 'packages/Types/Types_types.php';
-require_once 'packages/Limits/Limits_constants.php';
+$loader = new ThriftClassLoader();
+$loader->registerNamespace('Thrift', __DIR__ . '/../../lib');
+$loader->registerDefinition('EDAM', __DIR__ . '/../../lib');
+$loader->registerNamespace('Evernote', __DIR__ . '/../../lib');
+$loader->register();
 
 // A global exception handler for our program so that error messages all go to the console
 function en_exception_handler($exception)
@@ -42,7 +46,7 @@ set_exception_handler('en_exception_handler');
 // purpose of exploring the API, you can get a developer token that allows
 // you to access your own Evernote account. To get a developer token, visit
 // https://sandbox.evernote.com/api/DeveloperToken.action
-$authToken = "your developer token";
+$authToken = "S=s1:U=77b7:E=1448dbf4a41:C=13d360e1e41:P=1cd:A=en-devtoken:V=2:H=c7788b301e122b3934e97eb4ba4eb3c6";
 
 if ($authToken == "your developer token") {
     print "Please fill in your developer token\n";
@@ -61,8 +65,8 @@ $userStore = $client->getUserStore();
 // Connect to the service and check the protocol version
 $versionOK =
     $userStore->checkVersion("Evernote EDAMTest (PHP)",
-         $GLOBALS['EDAM_UserStore_UserStore_CONSTANTS']['EDAM_VERSION_MAJOR'],
-         $GLOBALS['EDAM_UserStore_UserStore_CONSTANTS']['EDAM_VERSION_MINOR']);
+        UserStoreConstants::$EDAM_VERSION_MAJOR,
+        UserStoreConstants::$EDAM_VERSION_MINOR);
 print "Is my Evernote API version up to date?  " . $versionOK . "\n\n";
 if ($versionOK == 0) {
     exit(1);
@@ -88,7 +92,7 @@ $note->title = "Test note from EDAMTest.php";
 // for the attachment. At a minimum, the Resource contains the binary attachment
 // data, an MD5 hash of the binary data, and the attachment MIME type. It can also
 // include attributes such as filename and location.
-$filename = "enlogo.png";
+$filename = __DIR__ . "enlogo.png";
 $image = fread(fopen($filename, "rb"), filesize($filename));
 $hash = md5($image, 1);
 
@@ -123,9 +127,9 @@ $note->content =
 
 // When note titles are user-generated, it's important to validate them
 $len = strlen($note->title);
-$min = $GLOBALS['EDAM_Limits_Limits_CONSTANTS']['EDAM_NOTE_TITLE_LEN_MIN'];
-$max = $GLOBALS['EDAM_Limits_Limits_CONSTANTS']['EDAM_NOTE_TITLE_LEN_MAX'];
-$pattern = '#' . $GLOBALS['EDAM_Limits_Limits_CONSTANTS']['EDAM_NOTE_TITLE_REGEX'] . '#'; // Add PCRE delimiters
+$min = LimitsConstants::$EDAM_NOTE_TITLE_LEN_MIN;
+$max = LimitsConstants::$EDAM_NOTE_TITLE_LEN_MAX;
+$pattern = '#' . LimitsConstants::$EDAM_NOTE_TITLE_REGEX . '#'; // Add PCRE delimiters
 if ($len < $min || $len > $max || !preg_match($pattern, $note->title)) {
     print "\nInvalid note title: " . $note->title . '\n\n';
     exit(1);
