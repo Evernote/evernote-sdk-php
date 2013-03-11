@@ -92,7 +92,7 @@ $note->title = "Test note from EDAMTest.php";
 // for the attachment. At a minimum, the Resource contains the binary attachment
 // data, an MD5 hash of the binary data, and the attachment MIME type. It can also
 // include attributes such as filename and location.
-$filename = __DIR__ . "enlogo.png";
+$filename = __DIR__ . "/enlogo.png";
 $image = fread(fopen($filename, "rb"), filesize($filename));
 $hash = md5($image, 1);
 
