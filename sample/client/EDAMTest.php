@@ -18,13 +18,7 @@ use EDAM\Error\EDAMUserException, EDAM\Error\EDAMErrorCode;
 use Evernote\Client;
 use EDAM\UserStore\Constants as UserStoreConstants;
 
-require_once __DIR__.'/../../lib/Thrift/ClassLoader/ThriftClassLoader.php';
-
-$loader = new ThriftClassLoader();
-$loader->registerNamespace('Thrift', __DIR__ . '/../../lib');
-$loader->registerDefinition('EDAM', __DIR__ . '/../../lib');
-$loader->registerNamespace('Evernote', __DIR__ . '/../../lib');
-$loader->register();
+require_once __DIR__.'/../../lib/autoload.php';
 
 // A global exception handler for our program so that error messages all go to the console
 function en_exception_handler($exception)
