@@ -12,6 +12,8 @@
      * in the extension's documentation: http://www.php.net/manual/en/book.oauth.php
      */
 
+    require_once __DIR__ . '/lib/autoload.php';
+
     // Include our configuration settings
     require_once 'config.php';
 

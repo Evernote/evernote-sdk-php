@@ -6,14 +6,6 @@
      * This file contains functions used by Evernote's PHP OAuth samples.
      */
 
-    // Include the Evernote API from the lib subdirectory.
-    // lib simply contains the contents of /php/lib from the Evernote API SDK
-    define("EVERNOTE_LIBS", dirname(__FILE__) . DIRECTORY_SEPARATOR . "lib");
-    ini_set("include_path", ini_get("include_path") . PATH_SEPARATOR . EVERNOTE_LIBS);
-
-    require_once 'Evernote/Client.php';
-    require_once 'packages/Types/Types_types.php';
-
     // Import the classes that we're going to be using
     use EDAM\Error\EDAMSystemException, EDAM\Error\EDAMUserException, EDAM\Error\EDAMErrorCode;
     use Evernote\Client;

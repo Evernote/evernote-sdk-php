@@ -11,17 +11,14 @@
 
 // Import the classes that we're going to be using
 use EDAM\Types\Data, EDAM\Types\Note, EDAM\Types\Resource, EDAM\Types\ResourceAttributes;
+use EDAM\Limits\Constants as LimitsConstants;
+use EDAM\Error\EDAMSystemException;
+use Thrift\ClassLoader\ThriftClassLoader;
 use EDAM\Error\EDAMUserException, EDAM\Error\EDAMErrorCode;
 use Evernote\Client;
+use EDAM\UserStore\Constants as UserStoreConstants;
 
-ini_set("include_path", ini_get("include_path") . PATH_SEPARATOR . "../../lib" . PATH_SEPARATOR);
-require_once 'autoload.php';
-
-require_once 'Evernote/Client.php';
-
-require_once 'packages/Errors/Errors_types.php';
-require_once 'packages/Types/Types_types.php';
-require_once 'packages/Limits/Limits_constants.php';
+require_once __DIR__.'/../../lib/autoload.php';
 
 // A global exception handler for our program so that error messages all go to the console
 function en_exception_handler($exception)
@@ -62,8 +59,8 @@ $userStore = $client->getUserStore();
 // Connect to the service and check the protocol version
 $versionOK =
     $userStore->checkVersion("Evernote EDAMTest (PHP)",
-         $GLOBALS['EDAM_UserStore_UserStore_CONSTANTS']['EDAM_VERSION_MAJOR'],
-         $GLOBALS['EDAM_UserStore_UserStore_CONSTANTS']['EDAM_VERSION_MINOR']);
+        UserStoreConstants::$EDAM_VERSION_MAJOR,
+        UserStoreConstants::$EDAM_VERSION_MINOR);
 print "Is my Evernote API version up to date?  " . $versionOK . "\n\n";
 if ($versionOK == 0) {
     exit(1);
@@ -89,7 +86,7 @@ $note->title = "Test note from EDAMTest.php";
 // for the attachment. At a minimum, the Resource contains the binary attachment
 // data, an MD5 hash of the binary data, and the attachment MIME type. It can also
 // include attributes such as filename and location.
-$filename = "enlogo.png";
+$filename = __DIR__ . "/enlogo.png";
 $image = fread(fopen($filename, "rb"), filesize($filename));
 $hash = md5($image, 1);
 
@@ -124,9 +121,9 @@ $note->content =
 
 // When note titles are user-generated, it's important to validate them
 $len = strlen($note->title);
-$min = $GLOBALS['EDAM_Limits_Limits_CONSTANTS']['EDAM_NOTE_TITLE_LEN_MIN'];
-$max = $GLOBALS['EDAM_Limits_Limits_CONSTANTS']['EDAM_NOTE_TITLE_LEN_MAX'];
-$pattern = '#' . $GLOBALS['EDAM_Limits_Limits_CONSTANTS']['EDAM_NOTE_TITLE_REGEX'] . '#'; // Add PCRE delimiters
+$min = LimitsConstants::$EDAM_NOTE_TITLE_LEN_MIN;
+$max = LimitsConstants::$EDAM_NOTE_TITLE_LEN_MAX;
+$pattern = '#' . LimitsConstants::$EDAM_NOTE_TITLE_REGEX . '#'; // Add PCRE delimiters
 if ($len < $min || $len > $max || !preg_match($pattern, $note->title)) {
     print "\nInvalid note title: " . $note->title . '\n\n';
     exit(1);
