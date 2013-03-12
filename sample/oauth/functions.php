@@ -66,7 +66,7 @@
 
                 return TRUE;
             } else {
-                $lastError = 'Failed to obtain temporary credentials: ' . $oauth->getLastResponse();
+                $lastError = 'Failed to obtain temporary credentials.';
             }
         } catch (OAuthException $e) {
             $lastError = 'Error obtaining temporary credentials: ' . $e->getMessage();
@@ -141,7 +141,7 @@
 
                 return TRUE;
             } else {
-                $lastError = 'Failed to obtain token credentials: ' . $oauth->getLastResponse();
+                $lastError = 'Failed to obtain token credentials.';
             }
         } catch (OAuthException $e) {
             $lastError = 'Error obtaining token credentials: ' . $e->getMessage();
