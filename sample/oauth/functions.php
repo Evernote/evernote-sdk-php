@@ -15,7 +15,10 @@
     require_once 'packages/Types/Types_types.php';
 
     // Import the classes that we're going to be using
-    use EDAM\Error\EDAMSystemException, EDAM\Error\EDAMUserException, EDAM\Error\EDAMErrorCode;
+    use EDAM\Error\EDAMSystemException,
+        EDAM\Error\EDAMUserException,
+        EDAM\Error\EDAMErrorCode,
+        EDAM\Error\EDAMNotFoundException;
     use Evernote\Client;
 
     // Verify that you successfully installed the PHP OAuth Extension
@@ -63,7 +66,7 @@
 
                 return TRUE;
             } else {
-                $lastError = 'Failed to obtain temporary credentials: ' . $oauth->getLastResponse();
+                $lastError = 'Failed to obtain temporary credentials.';
             }
         } catch (OAuthException $e) {
             $lastError = 'Error obtaining temporary credentials: ' . $e->getMessage();
@@ -138,7 +141,7 @@
 
                 return TRUE;
             } else {
-                $lastError = 'Failed to obtain token credentials: ' . $oauth->getLastResponse();
+                $lastError = 'Failed to obtain token credentials.';
             }
         } catch (OAuthException $e) {
             $lastError = 'Error obtaining token credentials: ' . $e->getMessage();
