@@ -83,7 +83,7 @@ class Client
         return new Store($this->token, '\EDAM\NoteStore\NoteStoreClient', $noteStoreUrl);
     }
 
-    public function getSharedNoteStore($linkedNoteBook)
+    public function getSharedNoteStore($linkedNotebook)
     {
         $noteStoreUrl = $linkedNotebook->noteStoreUrl;
         $noteStore = new Store($this->token, '\EDAM\NoteStore\NoteStoreClient', $noteStoreUrl);
