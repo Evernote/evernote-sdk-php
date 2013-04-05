@@ -1,0 +1,7 @@
+{
+  "require": {
+    "opauth/opauth": "*",
+    "evernote/evernote": "1.23.3.*@dev",
+    "opauth/evernote": "*@dev"
+  }
+}
