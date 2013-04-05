@@ -75,7 +75,7 @@ $client = new Evernote\Client(array(
   'consumerSecret' => 'YOUR CONSUMER SECRET'
 ));
 $requestToken = $client->getRequestToken('YOUR CALLBACK URL');
-$authorizeUrl = $client->getAuthorizeUrl($requestToken);
+$authorizeUrl = $client->getAuthorizeUrl($requestToken['oauth_token']);
  => https://sandbox.evernote.com/OAuth.action?oauth_token=OAUTH_TOKEN
 ```
 To obtain the access token
