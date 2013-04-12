@@ -7,7 +7,7 @@
     "sdk"
   ],
   "homepage": "https://github.com/evernote/evernote-sdk-php",
-  "version": "1.23.0",
+  "version": "1.23.3",
   "license": "Apache",
   "authors": [
     {
