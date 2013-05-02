@@ -15,6 +15,7 @@ interface UserStoreIf {
   public function getBootstrapInfo($locale);
   public function authenticate($username, $password, $consumerKey, $consumerSecret);
   public function authenticateLongSession($username, $password, $consumerKey, $consumerSecret, $deviceIdentifier, $deviceDescription);
+  public function revokeLongSession($authenticationToken);
   public function authenticateToBusiness($authenticationToken);
   public function refreshAuthentication($authenticationToken);
   public function getUser($authenticationToken);
@@ -258,6 +259,60 @@ class UserStoreClient implements \EDAM\UserStore\UserStoreIf {
       throw $result->systemException;
     }
     throw new \Exception("authenticateLongSession failed: unknown result");
+  }
+
+  public function revokeLongSession($authenticationToken)
+  {
+    $this->send_revokeLongSession($authenticationToken);
+    $this->recv_revokeLongSession();
+  }
+
+  public function send_revokeLongSession($authenticationToken)
+  {
+    $args = new \EDAM\UserStore\UserStore_revokeLongSession_args();
+    $args->authenticationToken = $authenticationToken;
+    $bin_accel = ($this->output_ instanceof \TProtocol::$TBINARYPROTOCOLACCELERATED) && function_exists('thrift_protocol_write_binary');
+    if ($bin_accel)
+    {
+      thrift_protocol_write_binary($this->output_, 'revokeLongSession', \TMessageType::CALL, $args, $this->seqid_, $this->output_->isStrictWrite());
+    }
+    else
+    {
+      $this->output_->writeMessageBegin('revokeLongSession', \TMessageType::CALL, $this->seqid_);
+      $args->write($this->output_);
+      $this->output_->writeMessageEnd();
+      $this->output_->getTransport()->flush();
+    }
+  }
+
+  public function recv_revokeLongSession()
+  {
+    $bin_accel = ($this->input_ instanceof \TProtocol::$TBINARYPROTOCOLACCELERATED) && function_exists('thrift_protocol_read_binary');
+    if ($bin_accel) $result = thrift_protocol_read_binary($this->input_, '\EDAM\UserStore\UserStore_revokeLongSession_result', $this->input_->isStrictRead());
+    else
+    {
+      $rseqid = 0;
+      $fname = null;
+      $mtype = 0;
+
+      $this->input_->readMessageBegin($fname, $mtype, $rseqid);
+      if ($mtype == \TMessageType::EXCEPTION) {
+        $x = new \TApplicationException();
+        $x->read($this->input_);
+        $this->input_->readMessageEnd();
+        throw $x;
+      }
+      $result = new \EDAM\UserStore\UserStore_revokeLongSession_result();
+      $result->read($this->input_);
+      $this->input_->readMessageEnd();
+    }
+    if ($result->userException !== null) {
+      throw $result->userException;
+    }
+    if ($result->systemException !== null) {
+      throw $result->systemException;
+    }
+    return;
   }
 
   public function authenticateToBusiness($authenticationToken)
@@ -614,7 +669,7 @@ class UserStore_checkVersion_args {
 
   public $clientName = null;
   public $edamVersionMajor = 1;
-  public $edamVersionMinor = 23;
+  public $edamVersionMinor = 24;
 
   public function __construct($vals=null) {
     if (!isset(self::$_TSPEC)) {
@@ -1471,6 +1526,174 @@ class UserStore_authenticateLongSession_result {
       $xfer += $this->success->write($output);
       $xfer += $output->writeFieldEnd();
     }
+    if ($this->userException !== null) {
+      $xfer += $output->writeFieldBegin('userException', \TType::STRUCT, 1);
+      $xfer += $this->userException->write($output);
+      $xfer += $output->writeFieldEnd();
+    }
+    if ($this->systemException !== null) {
+      $xfer += $output->writeFieldBegin('systemException', \TType::STRUCT, 2);
+      $xfer += $this->systemException->write($output);
+      $xfer += $output->writeFieldEnd();
+    }
+    $xfer += $output->writeFieldStop();
+    $xfer += $output->writeStructEnd();
+    return $xfer;
+  }
+
+}
+
+class UserStore_revokeLongSession_args {
+  static $_TSPEC;
+
+  public $authenticationToken = null;
+
+  public function __construct($vals=null) {
+    if (!isset(self::$_TSPEC)) {
+      self::$_TSPEC = array(
+        1 => array(
+          'var' => 'authenticationToken',
+          'type' => \TType::STRING,
+          ),
+        );
+    }
+    if (is_array($vals)) {
+      if (isset($vals['authenticationToken'])) {
+        $this->authenticationToken = $vals['authenticationToken'];
+      }
+    }
+  }
+
+  public function getName() {
+    return 'UserStore_revokeLongSession_args';
+  }
+
+  public function read($input)
+  {
+    $xfer = 0;
+    $fname = null;
+    $ftype = 0;
+    $fid = 0;
+    $xfer += $input->readStructBegin($fname);
+    while (true)
+    {
+      $xfer += $input->readFieldBegin($fname, $ftype, $fid);
+      if ($ftype == \TType::STOP) {
+        break;
+      }
+      switch ($fid)
+      {
+        case 1:
+          if ($ftype == \TType::STRING) {
+            $xfer += $input->readString($this->authenticationToken);
+          } else {
+            $xfer += $input->skip($ftype);
+          }
+          break;
+        default:
+          $xfer += $input->skip($ftype);
+          break;
+      }
+      $xfer += $input->readFieldEnd();
+    }
+    $xfer += $input->readStructEnd();
+    return $xfer;
+  }
+
+  public function write($output) {
+    $xfer = 0;
+    $xfer += $output->writeStructBegin('UserStore_revokeLongSession_args');
+    if ($this->authenticationToken !== null) {
+      $xfer += $output->writeFieldBegin('authenticationToken', \TType::STRING, 1);
+      $xfer += $output->writeString($this->authenticationToken);
+      $xfer += $output->writeFieldEnd();
+    }
+    $xfer += $output->writeFieldStop();
+    $xfer += $output->writeStructEnd();
+    return $xfer;
+  }
+
+}
+
+class UserStore_revokeLongSession_result {
+  static $_TSPEC;
+
+  public $userException = null;
+  public $systemException = null;
+
+  public function __construct($vals=null) {
+    if (!isset(self::$_TSPEC)) {
+      self::$_TSPEC = array(
+        1 => array(
+          'var' => 'userException',
+          'type' => \TType::STRUCT,
+          'class' => '\EDAM\Error\EDAMUserException',
+          ),
+        2 => array(
+          'var' => 'systemException',
+          'type' => \TType::STRUCT,
+          'class' => '\EDAM\Error\EDAMSystemException',
+          ),
+        );
+    }
+    if (is_array($vals)) {
+      if (isset($vals['userException'])) {
+        $this->userException = $vals['userException'];
+      }
+      if (isset($vals['systemException'])) {
+        $this->systemException = $vals['systemException'];
+      }
+    }
+  }
+
+  public function getName() {
+    return 'UserStore_revokeLongSession_result';
+  }
+
+  public function read($input)
+  {
+    $xfer = 0;
+    $fname = null;
+    $ftype = 0;
+    $fid = 0;
+    $xfer += $input->readStructBegin($fname);
+    while (true)
+    {
+      $xfer += $input->readFieldBegin($fname, $ftype, $fid);
+      if ($ftype == \TType::STOP) {
+        break;
+      }
+      switch ($fid)
+      {
+        case 1:
+          if ($ftype == \TType::STRUCT) {
+            $this->userException = new \EDAM\Error\EDAMUserException();
+            $xfer += $this->userException->read($input);
+          } else {
+            $xfer += $input->skip($ftype);
+          }
+          break;
+        case 2:
+          if ($ftype == \TType::STRUCT) {
+            $this->systemException = new \EDAM\Error\EDAMSystemException();
+            $xfer += $this->systemException->read($input);
+          } else {
+            $xfer += $input->skip($ftype);
+          }
+          break;
+        default:
+          $xfer += $input->skip($ftype);
+          break;
+      }
+      $xfer += $input->readFieldEnd();
+    }
+    $xfer += $input->readStructEnd();
+    return $xfer;
+  }
+
+  public function write($output) {
+    $xfer = 0;
+    $xfer += $output->writeStructBegin('UserStore_revokeLongSession_result');
     if ($this->userException !== null) {
       $xfer += $output->writeFieldBegin('userException', \TType::STRUCT, 1);
       $xfer += $this->userException->write($output);

@@ -1,7 +1,7 @@
 Evernote SDK for PHP
 =========================================
 
-Evernote API version 1.22
+Evernote API version 1.24
 
 Overview
 --------

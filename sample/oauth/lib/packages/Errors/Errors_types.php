@@ -27,6 +27,8 @@ $GLOBALS['\EDAM\Error\E_EDAMErrorCode'] = array(
   'TOO_FEW' => 15,
   'TOO_MANY' => 16,
   'UNSUPPORTED_OPERATION' => 17,
+  'TAKEN_DOWN' => 18,
+  'RATE_LIMIT_REACHED' => 19,
 );
 
 final class EDAMErrorCode {
@@ -47,6 +49,8 @@ final class EDAMErrorCode {
   const TOO_FEW = 15;
   const TOO_MANY = 16;
   const UNSUPPORTED_OPERATION = 17;
+  const TAKEN_DOWN = 18;
+  const RATE_LIMIT_REACHED = 19;
   static public $__names = array(
     1 => 'UNKNOWN',
     2 => 'BAD_DATA_FORMAT',
@@ -65,6 +69,8 @@ final class EDAMErrorCode {
     15 => 'TOO_FEW',
     16 => 'TOO_MANY',
     17 => 'UNSUPPORTED_OPERATION',
+    18 => 'TAKEN_DOWN',
+    19 => 'RATE_LIMIT_REACHED',
   );
 }
 
@@ -165,6 +171,7 @@ class EDAMSystemException extends \TException {
 
   public $errorCode = null;
   public $message = null;
+  public $rateLimitDuration = null;
 
   public function __construct($vals=null) {
     if (!isset(self::$_TSPEC)) {
@@ -177,6 +184,10 @@ class EDAMSystemException extends \TException {
           'var' => 'message',
           'type' => \TType::STRING,
           ),
+        3 => array(
+          'var' => 'rateLimitDuration',
+          'type' => \TType::I32,
+          ),
         );
     }
     if (is_array($vals)) {
@@ -185,6 +196,9 @@ class EDAMSystemException extends \TException {
       }
       if (isset($vals['message'])) {
         $this->message = $vals['message'];
+      }
+      if (isset($vals['rateLimitDuration'])) {
+        $this->rateLimitDuration = $vals['rateLimitDuration'];
       }
     }
   }
@@ -222,6 +236,13 @@ class EDAMSystemException extends \TException {
             $xfer += $input->skip($ftype);
           }
           break;
+        case 3:
+          if ($ftype == \TType::I32) {
+            $xfer += $input->readI32($this->rateLimitDuration);
+          } else {
+            $xfer += $input->skip($ftype);
+          }
+          break;
         default:
           $xfer += $input->skip($ftype);
           break;
@@ -243,6 +264,11 @@ class EDAMSystemException extends \TException {
     if ($this->message !== null) {
       $xfer += $output->writeFieldBegin('message', \TType::STRING, 2);
       $xfer += $output->writeString($this->message);
+      $xfer += $output->writeFieldEnd();
+    }
+    if ($this->rateLimitDuration !== null) {
+      $xfer += $output->writeFieldBegin('rateLimitDuration', \TType::I32, 3);
+      $xfer += $output->writeI32($this->rateLimitDuration);
       $xfer += $output->writeFieldEnd();
     }
     $xfer += $output->writeFieldStop();
