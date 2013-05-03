@@ -13,6 +13,7 @@ include_once $GLOBALS['THRIFT_ROOT'].'/packages/Limits/Limits_types.php';
 $GLOBALS['\EDAM\Types\E_PrivilegeLevel'] = array(
   'NORMAL' => 1,
   'PREMIUM' => 3,
+  'VIP' => 5,
   'MANAGER' => 7,
   'SUPPORT' => 8,
   'ADMIN' => 9,
@@ -21,12 +22,14 @@ $GLOBALS['\EDAM\Types\E_PrivilegeLevel'] = array(
 final class PrivilegeLevel {
   const NORMAL = 1;
   const PREMIUM = 3;
+  const VIP = 5;
   const MANAGER = 7;
   const SUPPORT = 8;
   const ADMIN = 9;
   static public $__names = array(
     1 => 'NORMAL',
     3 => 'PREMIUM',
+    5 => 'VIP',
     7 => 'MANAGER',
     8 => 'SUPPORT',
     9 => 'ADMIN',
@@ -164,6 +167,20 @@ final class SharedNotebookInstanceRestrictions {
   static public $__names = array(
     1 => 'ONLY_JOINED_OR_PREVIEW',
     2 => 'NO_SHARED_NOTEBOOKS',
+  );
+}
+
+$GLOBALS['\EDAM\Types\E_ReminderEmailConfig'] = array(
+  'DO_NOT_SEND' => 1,
+  'SEND_DAILY_EMAIL' => 2,
+);
+
+final class ReminderEmailConfig {
+  const DO_NOT_SEND = 1;
+  const SEND_DAILY_EMAIL = 2;
+  static public $__names = array(
+    1 => 'DO_NOT_SEND',
+    2 => 'SEND_DAILY_EMAIL',
   );
 }
 
@@ -306,12 +323,13 @@ class UserAttributes {
   public $twitterId = null;
   public $groupName = null;
   public $recognitionLanguage = null;
-  public $customerProfileId = null;
   public $referralProof = null;
   public $educationalDiscount = null;
   public $businessAddress = null;
   public $hideSponsorBilling = null;
   public $taxExempt = null;
+  public $useEmailAutoFiling = null;
+  public $reminderEmailConfig = null;
 
   public function __construct($vals=null) {
     if (!isset(self::$_TSPEC)) {
@@ -420,10 +438,6 @@ class UserAttributes {
           'var' => 'recognitionLanguage',
           'type' => \TType::STRING,
           ),
-        27 => array(
-          'var' => 'customerProfileId',
-          'type' => \TType::I64,
-          ),
         28 => array(
           'var' => 'referralProof',
           'type' => \TType::STRING,
@@ -443,6 +457,14 @@ class UserAttributes {
         32 => array(
           'var' => 'taxExempt',
           'type' => \TType::BOOL,
+          ),
+        33 => array(
+          'var' => 'useEmailAutoFiling',
+          'type' => \TType::BOOL,
+          ),
+        34 => array(
+          'var' => 'reminderEmailConfig',
+          'type' => \TType::I32,
           ),
         );
     }
@@ -519,9 +541,6 @@ class UserAttributes {
       if (isset($vals['recognitionLanguage'])) {
         $this->recognitionLanguage = $vals['recognitionLanguage'];
       }
-      if (isset($vals['customerProfileId'])) {
-        $this->customerProfileId = $vals['customerProfileId'];
-      }
       if (isset($vals['referralProof'])) {
         $this->referralProof = $vals['referralProof'];
       }
@@ -536,6 +555,12 @@ class UserAttributes {
       }
       if (isset($vals['taxExempt'])) {
         $this->taxExempt = $vals['taxExempt'];
+      }
+      if (isset($vals['useEmailAutoFiling'])) {
+        $this->useEmailAutoFiling = $vals['useEmailAutoFiling'];
+      }
+      if (isset($vals['reminderEmailConfig'])) {
+        $this->reminderEmailConfig = $vals['reminderEmailConfig'];
       }
     }
   }
@@ -747,13 +772,6 @@ class UserAttributes {
             $xfer += $input->skip($ftype);
           }
           break;
-        case 27:
-          if ($ftype == \TType::I64) {
-            $xfer += $input->readI64($this->customerProfileId);
-          } else {
-            $xfer += $input->skip($ftype);
-          }
-          break;
         case 28:
           if ($ftype == \TType::STRING) {
             $xfer += $input->readString($this->referralProof);
@@ -785,6 +803,20 @@ class UserAttributes {
         case 32:
           if ($ftype == \TType::BOOL) {
             $xfer += $input->readBool($this->taxExempt);
+          } else {
+            $xfer += $input->skip($ftype);
+          }
+          break;
+        case 33:
+          if ($ftype == \TType::BOOL) {
+            $xfer += $input->readBool($this->useEmailAutoFiling);
+          } else {
+            $xfer += $input->skip($ftype);
+          }
+          break;
+        case 34:
+          if ($ftype == \TType::I32) {
+            $xfer += $input->readI32($this->reminderEmailConfig);
           } else {
             $xfer += $input->skip($ftype);
           }
@@ -946,11 +978,6 @@ class UserAttributes {
       $xfer += $output->writeString($this->recognitionLanguage);
       $xfer += $output->writeFieldEnd();
     }
-    if ($this->customerProfileId !== null) {
-      $xfer += $output->writeFieldBegin('customerProfileId', \TType::I64, 27);
-      $xfer += $output->writeI64($this->customerProfileId);
-      $xfer += $output->writeFieldEnd();
-    }
     if ($this->referralProof !== null) {
       $xfer += $output->writeFieldBegin('referralProof', \TType::STRING, 28);
       $xfer += $output->writeString($this->referralProof);
@@ -974,6 +1001,16 @@ class UserAttributes {
     if ($this->taxExempt !== null) {
       $xfer += $output->writeFieldBegin('taxExempt', \TType::BOOL, 32);
       $xfer += $output->writeBool($this->taxExempt);
+      $xfer += $output->writeFieldEnd();
+    }
+    if ($this->useEmailAutoFiling !== null) {
+      $xfer += $output->writeFieldBegin('useEmailAutoFiling', \TType::BOOL, 33);
+      $xfer += $output->writeBool($this->useEmailAutoFiling);
+      $xfer += $output->writeFieldEnd();
+    }
+    if ($this->reminderEmailConfig !== null) {
+      $xfer += $output->writeFieldBegin('reminderEmailConfig', \TType::I32, 34);
+      $xfer += $output->writeI32($this->reminderEmailConfig);
       $xfer += $output->writeFieldEnd();
     }
     $xfer += $output->writeFieldStop();
@@ -1007,6 +1044,8 @@ class Accounting {
   public $businessId = null;
   public $businessName = null;
   public $businessRole = null;
+  public $unitDiscount = null;
+  public $nextChargeDate = null;
 
   public function __construct($vals=null) {
     if (!isset(self::$_TSPEC)) {
@@ -1095,6 +1134,14 @@ class Accounting {
           'var' => 'businessRole',
           'type' => \TType::I32,
           ),
+        23 => array(
+          'var' => 'unitDiscount',
+          'type' => \TType::I32,
+          ),
+        24 => array(
+          'var' => 'nextChargeDate',
+          'type' => \TType::I64,
+          ),
         );
     }
     if (is_array($vals)) {
@@ -1160,6 +1207,12 @@ class Accounting {
       }
       if (isset($vals['businessRole'])) {
         $this->businessRole = $vals['businessRole'];
+      }
+      if (isset($vals['unitDiscount'])) {
+        $this->unitDiscount = $vals['unitDiscount'];
+      }
+      if (isset($vals['nextChargeDate'])) {
+        $this->nextChargeDate = $vals['nextChargeDate'];
       }
     }
   }
@@ -1330,6 +1383,20 @@ class Accounting {
             $xfer += $input->skip($ftype);
           }
           break;
+        case 23:
+          if ($ftype == \TType::I32) {
+            $xfer += $input->readI32($this->unitDiscount);
+          } else {
+            $xfer += $input->skip($ftype);
+          }
+          break;
+        case 24:
+          if ($ftype == \TType::I64) {
+            $xfer += $input->readI64($this->nextChargeDate);
+          } else {
+            $xfer += $input->skip($ftype);
+          }
+          break;
         default:
           $xfer += $input->skip($ftype);
           break;
@@ -1448,6 +1515,148 @@ class Accounting {
       $xfer += $output->writeI32($this->businessRole);
       $xfer += $output->writeFieldEnd();
     }
+    if ($this->unitDiscount !== null) {
+      $xfer += $output->writeFieldBegin('unitDiscount', \TType::I32, 23);
+      $xfer += $output->writeI32($this->unitDiscount);
+      $xfer += $output->writeFieldEnd();
+    }
+    if ($this->nextChargeDate !== null) {
+      $xfer += $output->writeFieldBegin('nextChargeDate', \TType::I64, 24);
+      $xfer += $output->writeI64($this->nextChargeDate);
+      $xfer += $output->writeFieldEnd();
+    }
+    $xfer += $output->writeFieldStop();
+    $xfer += $output->writeStructEnd();
+    return $xfer;
+  }
+
+}
+
+class BusinessUserInfo {
+  static $_TSPEC;
+
+  public $businessId = null;
+  public $businessName = null;
+  public $role = null;
+  public $email = null;
+
+  public function __construct($vals=null) {
+    if (!isset(self::$_TSPEC)) {
+      self::$_TSPEC = array(
+        1 => array(
+          'var' => 'businessId',
+          'type' => \TType::I32,
+          ),
+        2 => array(
+          'var' => 'businessName',
+          'type' => \TType::STRING,
+          ),
+        3 => array(
+          'var' => 'role',
+          'type' => \TType::I32,
+          ),
+        4 => array(
+          'var' => 'email',
+          'type' => \TType::STRING,
+          ),
+        );
+    }
+    if (is_array($vals)) {
+      if (isset($vals['businessId'])) {
+        $this->businessId = $vals['businessId'];
+      }
+      if (isset($vals['businessName'])) {
+        $this->businessName = $vals['businessName'];
+      }
+      if (isset($vals['role'])) {
+        $this->role = $vals['role'];
+      }
+      if (isset($vals['email'])) {
+        $this->email = $vals['email'];
+      }
+    }
+  }
+
+  public function getName() {
+    return 'BusinessUserInfo';
+  }
+
+  public function read($input)
+  {
+    $xfer = 0;
+    $fname = null;
+    $ftype = 0;
+    $fid = 0;
+    $xfer += $input->readStructBegin($fname);
+    while (true)
+    {
+      $xfer += $input->readFieldBegin($fname, $ftype, $fid);
+      if ($ftype == \TType::STOP) {
+        break;
+      }
+      switch ($fid)
+      {
+        case 1:
+          if ($ftype == \TType::I32) {
+            $xfer += $input->readI32($this->businessId);
+          } else {
+            $xfer += $input->skip($ftype);
+          }
+          break;
+        case 2:
+          if ($ftype == \TType::STRING) {
+            $xfer += $input->readString($this->businessName);
+          } else {
+            $xfer += $input->skip($ftype);
+          }
+          break;
+        case 3:
+          if ($ftype == \TType::I32) {
+            $xfer += $input->readI32($this->role);
+          } else {
+            $xfer += $input->skip($ftype);
+          }
+          break;
+        case 4:
+          if ($ftype == \TType::STRING) {
+            $xfer += $input->readString($this->email);
+          } else {
+            $xfer += $input->skip($ftype);
+          }
+          break;
+        default:
+          $xfer += $input->skip($ftype);
+          break;
+      }
+      $xfer += $input->readFieldEnd();
+    }
+    $xfer += $input->readStructEnd();
+    return $xfer;
+  }
+
+  public function write($output) {
+    $xfer = 0;
+    $xfer += $output->writeStructBegin('BusinessUserInfo');
+    if ($this->businessId !== null) {
+      $xfer += $output->writeFieldBegin('businessId', \TType::I32, 1);
+      $xfer += $output->writeI32($this->businessId);
+      $xfer += $output->writeFieldEnd();
+    }
+    if ($this->businessName !== null) {
+      $xfer += $output->writeFieldBegin('businessName', \TType::STRING, 2);
+      $xfer += $output->writeString($this->businessName);
+      $xfer += $output->writeFieldEnd();
+    }
+    if ($this->role !== null) {
+      $xfer += $output->writeFieldBegin('role', \TType::I32, 3);
+      $xfer += $output->writeI32($this->role);
+      $xfer += $output->writeFieldEnd();
+    }
+    if ($this->email !== null) {
+      $xfer += $output->writeFieldBegin('email', \TType::STRING, 4);
+      $xfer += $output->writeString($this->email);
+      $xfer += $output->writeFieldEnd();
+    }
     $xfer += $output->writeFieldStop();
     $xfer += $output->writeStructEnd();
     return $xfer;
@@ -1468,6 +1677,7 @@ class PremiumInfo {
   public $canPurchaseUploadAllowance = null;
   public $sponsoredGroupName = null;
   public $sponsoredGroupRole = null;
+  public $premiumUpgradable = null;
 
   public function __construct($vals=null) {
     if (!isset(self::$_TSPEC)) {
@@ -1512,6 +1722,10 @@ class PremiumInfo {
           'var' => 'sponsoredGroupRole',
           'type' => \TType::I32,
           ),
+        11 => array(
+          'var' => 'premiumUpgradable',
+          'type' => \TType::BOOL,
+          ),
         );
     }
     if (is_array($vals)) {
@@ -1544,6 +1758,9 @@ class PremiumInfo {
       }
       if (isset($vals['sponsoredGroupRole'])) {
         $this->sponsoredGroupRole = $vals['sponsoredGroupRole'];
+      }
+      if (isset($vals['premiumUpgradable'])) {
+        $this->premiumUpgradable = $vals['premiumUpgradable'];
       }
     }
   }
@@ -1637,6 +1854,13 @@ class PremiumInfo {
             $xfer += $input->skip($ftype);
           }
           break;
+        case 11:
+          if ($ftype == \TType::BOOL) {
+            $xfer += $input->readBool($this->premiumUpgradable);
+          } else {
+            $xfer += $input->skip($ftype);
+          }
+          break;
         default:
           $xfer += $input->skip($ftype);
           break;
@@ -1700,6 +1924,11 @@ class PremiumInfo {
       $xfer += $output->writeI32($this->sponsoredGroupRole);
       $xfer += $output->writeFieldEnd();
     }
+    if ($this->premiumUpgradable !== null) {
+      $xfer += $output->writeFieldBegin('premiumUpgradable', \TType::BOOL, 11);
+      $xfer += $output->writeBool($this->premiumUpgradable);
+      $xfer += $output->writeFieldEnd();
+    }
     $xfer += $output->writeFieldStop();
     $xfer += $output->writeStructEnd();
     return $xfer;
@@ -1724,6 +1953,7 @@ class User {
   public $attributes = null;
   public $accounting = null;
   public $premiumInfo = null;
+  public $businessUserInfo = null;
 
   public function __construct($vals=null) {
     if (!isset(self::$_TSPEC)) {
@@ -1787,6 +2017,11 @@ class User {
           'type' => \TType::STRUCT,
           'class' => '\EDAM\Types\PremiumInfo',
           ),
+        18 => array(
+          'var' => 'businessUserInfo',
+          'type' => \TType::STRUCT,
+          'class' => '\EDAM\Types\BusinessUserInfo',
+          ),
         );
     }
     if (is_array($vals)) {
@@ -1831,6 +2066,9 @@ class User {
       }
       if (isset($vals['premiumInfo'])) {
         $this->premiumInfo = $vals['premiumInfo'];
+      }
+      if (isset($vals['businessUserInfo'])) {
+        $this->businessUserInfo = $vals['businessUserInfo'];
       }
     }
   }
@@ -1955,6 +2193,14 @@ class User {
             $xfer += $input->skip($ftype);
           }
           break;
+        case 18:
+          if ($ftype == \TType::STRUCT) {
+            $this->businessUserInfo = new \EDAM\Types\BusinessUserInfo();
+            $xfer += $this->businessUserInfo->read($input);
+          } else {
+            $xfer += $input->skip($ftype);
+          }
+          break;
         default:
           $xfer += $input->skip($ftype);
           break;
@@ -2045,6 +2291,14 @@ class User {
       }
       $xfer += $output->writeFieldBegin('premiumInfo', \TType::STRUCT, 17);
       $xfer += $this->premiumInfo->write($output);
+      $xfer += $output->writeFieldEnd();
+    }
+    if ($this->businessUserInfo !== null) {
+      if (!is_object($this->businessUserInfo)) {
+        throw new \TProtocolException('Bad type in structure.', \TProtocolException::INVALID_DATA);
+      }
+      $xfer += $output->writeFieldBegin('businessUserInfo', \TType::STRUCT, 18);
+      $xfer += $this->businessUserInfo->write($output);
       $xfer += $output->writeFieldEnd();
     }
     $xfer += $output->writeFieldStop();
@@ -2967,6 +3221,9 @@ class NoteAttributes {
   public $sourceURL = null;
   public $sourceApplication = null;
   public $shareDate = null;
+  public $reminderOrder = null;
+  public $reminderDoneTime = null;
+  public $reminderTime = null;
   public $placeName = null;
   public $contentClass = null;
   public $applicationData = null;
@@ -3010,6 +3267,18 @@ class NoteAttributes {
           ),
         17 => array(
           'var' => 'shareDate',
+          'type' => \TType::I64,
+          ),
+        18 => array(
+          'var' => 'reminderOrder',
+          'type' => \TType::I64,
+          ),
+        19 => array(
+          'var' => 'reminderDoneTime',
+          'type' => \TType::I64,
+          ),
+        20 => array(
+          'var' => 'reminderTime',
           'type' => \TType::I64,
           ),
         21 => array(
@@ -3070,6 +3339,15 @@ class NoteAttributes {
       }
       if (isset($vals['shareDate'])) {
         $this->shareDate = $vals['shareDate'];
+      }
+      if (isset($vals['reminderOrder'])) {
+        $this->reminderOrder = $vals['reminderOrder'];
+      }
+      if (isset($vals['reminderDoneTime'])) {
+        $this->reminderDoneTime = $vals['reminderDoneTime'];
+      }
+      if (isset($vals['reminderTime'])) {
+        $this->reminderTime = $vals['reminderTime'];
       }
       if (isset($vals['placeName'])) {
         $this->placeName = $vals['placeName'];
@@ -3167,6 +3445,27 @@ class NoteAttributes {
         case 17:
           if ($ftype == \TType::I64) {
             $xfer += $input->readI64($this->shareDate);
+          } else {
+            $xfer += $input->skip($ftype);
+          }
+          break;
+        case 18:
+          if ($ftype == \TType::I64) {
+            $xfer += $input->readI64($this->reminderOrder);
+          } else {
+            $xfer += $input->skip($ftype);
+          }
+          break;
+        case 19:
+          if ($ftype == \TType::I64) {
+            $xfer += $input->readI64($this->reminderDoneTime);
+          } else {
+            $xfer += $input->skip($ftype);
+          }
+          break;
+        case 20:
+          if ($ftype == \TType::I64) {
+            $xfer += $input->readI64($this->reminderTime);
           } else {
             $xfer += $input->skip($ftype);
           }
@@ -3276,6 +3575,21 @@ class NoteAttributes {
     if ($this->shareDate !== null) {
       $xfer += $output->writeFieldBegin('shareDate', \TType::I64, 17);
       $xfer += $output->writeI64($this->shareDate);
+      $xfer += $output->writeFieldEnd();
+    }
+    if ($this->reminderOrder !== null) {
+      $xfer += $output->writeFieldBegin('reminderOrder', \TType::I64, 18);
+      $xfer += $output->writeI64($this->reminderOrder);
+      $xfer += $output->writeFieldEnd();
+    }
+    if ($this->reminderDoneTime !== null) {
+      $xfer += $output->writeFieldBegin('reminderDoneTime', \TType::I64, 19);
+      $xfer += $output->writeI64($this->reminderDoneTime);
+      $xfer += $output->writeFieldEnd();
+    }
+    if ($this->reminderTime !== null) {
+      $xfer += $output->writeFieldBegin('reminderTime', \TType::I64, 20);
+      $xfer += $output->writeI64($this->reminderTime);
       $xfer += $output->writeFieldEnd();
     }
     if ($this->placeName !== null) {
@@ -4007,6 +4321,118 @@ class BusinessNotebook {
 
 }
 
+class SavedSearchScope {
+  static $_TSPEC;
+
+  public $includeAccount = null;
+  public $includePersonalLinkedNotebooks = null;
+  public $includeBusinessLinkedNotebooks = null;
+
+  public function __construct($vals=null) {
+    if (!isset(self::$_TSPEC)) {
+      self::$_TSPEC = array(
+        1 => array(
+          'var' => 'includeAccount',
+          'type' => \TType::BOOL,
+          ),
+        2 => array(
+          'var' => 'includePersonalLinkedNotebooks',
+          'type' => \TType::BOOL,
+          ),
+        3 => array(
+          'var' => 'includeBusinessLinkedNotebooks',
+          'type' => \TType::BOOL,
+          ),
+        );
+    }
+    if (is_array($vals)) {
+      if (isset($vals['includeAccount'])) {
+        $this->includeAccount = $vals['includeAccount'];
+      }
+      if (isset($vals['includePersonalLinkedNotebooks'])) {
+        $this->includePersonalLinkedNotebooks = $vals['includePersonalLinkedNotebooks'];
+      }
+      if (isset($vals['includeBusinessLinkedNotebooks'])) {
+        $this->includeBusinessLinkedNotebooks = $vals['includeBusinessLinkedNotebooks'];
+      }
+    }
+  }
+
+  public function getName() {
+    return 'SavedSearchScope';
+  }
+
+  public function read($input)
+  {
+    $xfer = 0;
+    $fname = null;
+    $ftype = 0;
+    $fid = 0;
+    $xfer += $input->readStructBegin($fname);
+    while (true)
+    {
+      $xfer += $input->readFieldBegin($fname, $ftype, $fid);
+      if ($ftype == \TType::STOP) {
+        break;
+      }
+      switch ($fid)
+      {
+        case 1:
+          if ($ftype == \TType::BOOL) {
+            $xfer += $input->readBool($this->includeAccount);
+          } else {
+            $xfer += $input->skip($ftype);
+          }
+          break;
+        case 2:
+          if ($ftype == \TType::BOOL) {
+            $xfer += $input->readBool($this->includePersonalLinkedNotebooks);
+          } else {
+            $xfer += $input->skip($ftype);
+          }
+          break;
+        case 3:
+          if ($ftype == \TType::BOOL) {
+            $xfer += $input->readBool($this->includeBusinessLinkedNotebooks);
+          } else {
+            $xfer += $input->skip($ftype);
+          }
+          break;
+        default:
+          $xfer += $input->skip($ftype);
+          break;
+      }
+      $xfer += $input->readFieldEnd();
+    }
+    $xfer += $input->readStructEnd();
+    return $xfer;
+  }
+
+  public function write($output) {
+    $xfer = 0;
+    $xfer += $output->writeStructBegin('SavedSearchScope');
+    if ($this->includeAccount !== null) {
+      $xfer += $output->writeFieldBegin('includeAccount', \TType::BOOL, 1);
+      $xfer += $output->writeBool($this->includeAccount);
+      $xfer += $output->writeFieldEnd();
+    }
+    if ($this->includePersonalLinkedNotebooks !== null) {
+      $xfer += $output->writeFieldBegin('includePersonalLinkedNotebooks', \TType::BOOL, 2);
+      $xfer += $output->writeBool($this->includePersonalLinkedNotebooks);
+      $xfer += $output->writeFieldEnd();
+    }
+    if ($this->includeBusinessLinkedNotebooks !== null) {
+      $xfer += $output->writeFieldBegin('includeBusinessLinkedNotebooks', \TType::BOOL, 3);
+      $xfer += $output->writeBool($this->includeBusinessLinkedNotebooks);
+      $xfer += $output->writeFieldEnd();
+    }
+    $xfer += $output->writeFieldStop();
+    $xfer += $output->writeStructEnd();
+    return $xfer;
+  }
+
+}
+
 class SavedSearch {
   static $_TSPEC;
 
@@ -4015,6 +4441,7 @@ class SavedSearch {
   public $query = null;
   public $format = null;
   public $updateSequenceNum = null;
+  public $scope = null;
 
   public function __construct($vals=null) {
     if (!isset(self::$_TSPEC)) {
@@ -4039,6 +4466,11 @@ class SavedSearch {
           'var' => 'updateSequenceNum',
           'type' => \TType::I32,
           ),
+        6 => array(
+          'var' => 'scope',
+          'type' => \TType::STRUCT,
+          'class' => '\EDAM\Types\SavedSearchScope',
+          ),
         );
     }
     if (is_array($vals)) {
@@ -4056,6 +4488,9 @@ class SavedSearch {
       }
       if (isset($vals['updateSequenceNum'])) {
         $this->updateSequenceNum = $vals['updateSequenceNum'];
+      }
+      if (isset($vals['scope'])) {
+        $this->scope = $vals['scope'];
       }
     }
   }
@@ -4114,6 +4549,14 @@ class SavedSearch {
             $xfer += $input->skip($ftype);
           }
           break;
+        case 6:
+          if ($ftype == \TType::STRUCT) {
+            $this->scope = new \EDAM\Types\SavedSearchScope();
+            $xfer += $this->scope->read($input);
+          } else {
+            $xfer += $input->skip($ftype);
+          }
+          break;
         default:
           $xfer += $input->skip($ftype);
           break;
@@ -4150,6 +4593,14 @@ class SavedSearch {
     if ($this->updateSequenceNum !== null) {
       $xfer += $output->writeFieldBegin('updateSequenceNum', \TType::I32, 5);
       $xfer += $output->writeI32($this->updateSequenceNum);
+      $xfer += $output->writeFieldEnd();
+    }
+    if ($this->scope !== null) {
+      if (!is_object($this->scope)) {
+        throw new \TProtocolException('Bad type in structure.', \TProtocolException::INVALID_DATA);
+      }
+      $xfer += $output->writeFieldBegin('scope', \TType::STRUCT, 6);
+      $xfer += $this->scope->write($output);
       $xfer += $output->writeFieldEnd();
     }
     $xfer += $output->writeFieldStop();
