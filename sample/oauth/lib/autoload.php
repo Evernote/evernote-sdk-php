@@ -36,16 +36,16 @@ $GLOBALS['THRIFT_AUTOLOAD'] = array();
 $GLOBALS['AUTOLOAD_HOOKS'] = array();
 
 if (!function_exists('__autoload')) {
-  public function __autoload($class)
-  {
-    global $THRIFT_AUTOLOAD;
-    $classl = strtolower($class);
-    if (isset($THRIFT_AUTOLOAD[$classl])) {
-      include_once $GLOBALS['THRIFT_ROOT'].'/packages/'.$THRIFT_AUTOLOAD[$classl];
-    } elseif (!empty($GLOBALS['AUTOLOAD_HOOKS'])) {
-      foreach ($GLOBALS['AUTOLOAD_HOOKS'] as $hook) {
-        $hook($class);
-      }
+    function __autoload($class)
+    {
+        global $THRIFT_AUTOLOAD;
+        $classl = strtolower($class);
+        if (isset($THRIFT_AUTOLOAD[$classl])) {
+            include_once $GLOBALS['THRIFT_ROOT'].'/packages/'.$THRIFT_AUTOLOAD[$classl];
+        } elseif (!empty($GLOBALS['AUTOLOAD_HOOKS'])) {
+            foreach ($GLOBALS['AUTOLOAD_HOOKS'] as $hook) {
+                $hook($class);
+            }
+        }
     }
-  }
 }
