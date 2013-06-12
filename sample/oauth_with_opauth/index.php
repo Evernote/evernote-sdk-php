@@ -31,7 +31,7 @@
     }
 
     // Store auth in a session
-    if (isset($_SESSION['opauth'])) {
+    if (isset($_SESSION['opauth']) && isset($_SESSION['opauth']['auth'])) {
         $_SESSION['accessToken'] = $_SESSION['opauth']['auth']['credentials']['token'];
         $_SESSION['userId'] = $_SESSION['opauth']['auth']['info']['userId'];
         $_SESSION['tokenExpires'] = $_SESSION['opauth']['auth']['info']['expires'];
@@ -63,7 +63,7 @@
             </li>
 <?php } else { ?>
             <li>
-                <a href="/evernote">Click here</a> to authenticate
+                <a href="/auth/evernote">Click here</a> to authenticate
             </li>
 <?php } ?>
         </ul>

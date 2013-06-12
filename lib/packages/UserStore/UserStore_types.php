@@ -193,6 +193,8 @@ class AuthenticationResult {
   public $publicUserInfo = null;
   public $noteStoreUrl = null;
   public $webApiUrlPrefix = null;
+  public $secondFactorRequired = null;
+  public $secondFactorDeliveryHint = null;
 
   public function __construct($vals=null) {
     if (!isset(self::$_TSPEC)) {
@@ -227,6 +229,14 @@ class AuthenticationResult {
           'var' => 'webApiUrlPrefix',
           'type' => \TType::STRING,
           ),
+        8 => array(
+          'var' => 'secondFactorRequired',
+          'type' => \TType::BOOL,
+          ),
+        9 => array(
+          'var' => 'secondFactorDeliveryHint',
+          'type' => \TType::STRING,
+          ),
         );
     }
     if (is_array($vals)) {
@@ -250,6 +260,12 @@ class AuthenticationResult {
       }
       if (isset($vals['webApiUrlPrefix'])) {
         $this->webApiUrlPrefix = $vals['webApiUrlPrefix'];
+      }
+      if (isset($vals['secondFactorRequired'])) {
+        $this->secondFactorRequired = $vals['secondFactorRequired'];
+      }
+      if (isset($vals['secondFactorDeliveryHint'])) {
+        $this->secondFactorDeliveryHint = $vals['secondFactorDeliveryHint'];
       }
     }
   }
@@ -324,6 +340,20 @@ class AuthenticationResult {
             $xfer += $input->skip($ftype);
           }
           break;
+        case 8:
+          if ($ftype == \TType::BOOL) {
+            $xfer += $input->readBool($this->secondFactorRequired);
+          } else {
+            $xfer += $input->skip($ftype);
+          }
+          break;
+        case 9:
+          if ($ftype == \TType::STRING) {
+            $xfer += $input->readString($this->secondFactorDeliveryHint);
+          } else {
+            $xfer += $input->skip($ftype);
+          }
+          break;
         default:
           $xfer += $input->skip($ftype);
           break;
@@ -376,6 +406,16 @@ class AuthenticationResult {
     if ($this->webApiUrlPrefix !== null) {
       $xfer += $output->writeFieldBegin('webApiUrlPrefix', \TType::STRING, 7);
       $xfer += $output->writeString($this->webApiUrlPrefix);
+      $xfer += $output->writeFieldEnd();
+    }
+    if ($this->secondFactorRequired !== null) {
+      $xfer += $output->writeFieldBegin('secondFactorRequired', \TType::BOOL, 8);
+      $xfer += $output->writeBool($this->secondFactorRequired);
+      $xfer += $output->writeFieldEnd();
+    }
+    if ($this->secondFactorDeliveryHint !== null) {
+      $xfer += $output->writeFieldBegin('secondFactorDeliveryHint', \TType::STRING, 9);
+      $xfer += $output->writeString($this->secondFactorDeliveryHint);
       $xfer += $output->writeFieldEnd();
     }
     $xfer += $output->writeFieldStop();

@@ -3229,6 +3229,8 @@ class NoteAttributes {
   public $applicationData = null;
   public $lastEditedBy = null;
   public $classifications = null;
+  public $creatorId = null;
+  public $lastEditorId = null;
 
   public function __construct($vals=null) {
     if (!isset(self::$_TSPEC)) {
@@ -3310,6 +3312,14 @@ class NoteAttributes {
             'type' => \TType::STRING,
             ),
           ),
+        27 => array(
+          'var' => 'creatorId',
+          'type' => \TType::I32,
+          ),
+        28 => array(
+          'var' => 'lastEditorId',
+          'type' => \TType::I32,
+          ),
         );
     }
     if (is_array($vals)) {
@@ -3363,6 +3373,12 @@ class NoteAttributes {
       }
       if (isset($vals['classifications'])) {
         $this->classifications = $vals['classifications'];
+      }
+      if (isset($vals['creatorId'])) {
+        $this->creatorId = $vals['creatorId'];
+      }
+      if (isset($vals['lastEditorId'])) {
+        $this->lastEditorId = $vals['lastEditorId'];
       }
     }
   }
@@ -3519,6 +3535,20 @@ class NoteAttributes {
             $xfer += $input->skip($ftype);
           }
           break;
+        case 27:
+          if ($ftype == \TType::I32) {
+            $xfer += $input->readI32($this->creatorId);
+          } else {
+            $xfer += $input->skip($ftype);
+          }
+          break;
+        case 28:
+          if ($ftype == \TType::I32) {
+            $xfer += $input->readI32($this->lastEditorId);
+          } else {
+            $xfer += $input->skip($ftype);
+          }
+          break;
         default:
           $xfer += $input->skip($ftype);
           break;
@@ -3631,6 +3661,16 @@ class NoteAttributes {
         }
         $output->writeMapEnd();
       }
+      $xfer += $output->writeFieldEnd();
+    }
+    if ($this->creatorId !== null) {
+      $xfer += $output->writeFieldBegin('creatorId', \TType::I32, 27);
+      $xfer += $output->writeI32($this->creatorId);
+      $xfer += $output->writeFieldEnd();
+    }
+    if ($this->lastEditorId !== null) {
+      $xfer += $output->writeFieldBegin('lastEditorId', \TType::I32, 28);
+      $xfer += $output->writeI32($this->lastEditorId);
       $xfer += $output->writeFieldEnd();
     }
     $xfer += $output->writeFieldStop();
@@ -4610,6 +4650,98 @@ class SavedSearch {
 
 }
 
+class SharedNotebookRecipientSettings {
+  static $_TSPEC;
+
+  public $reminderNotifyEmail = null;
+  public $reminderNotifyInApp = null;
+
+  public function __construct($vals=null) {
+    if (!isset(self::$_TSPEC)) {
+      self::$_TSPEC = array(
+        1 => array(
+          'var' => 'reminderNotifyEmail',
+          'type' => \TType::BOOL,
+          ),
+        2 => array(
+          'var' => 'reminderNotifyInApp',
+          'type' => \TType::BOOL,
+          ),
+        );
+    }
+    if (is_array($vals)) {
+      if (isset($vals['reminderNotifyEmail'])) {
+        $this->reminderNotifyEmail = $vals['reminderNotifyEmail'];
+      }
+      if (isset($vals['reminderNotifyInApp'])) {
+        $this->reminderNotifyInApp = $vals['reminderNotifyInApp'];
+      }
+    }
+  }
+
+  public function getName() {
+    return 'SharedNotebookRecipientSettings';
+  }
+
+  public function read($input)
+  {
+    $xfer = 0;
+    $fname = null;
+    $ftype = 0;
+    $fid = 0;
+    $xfer += $input->readStructBegin($fname);
+    while (true)
+    {
+      $xfer += $input->readFieldBegin($fname, $ftype, $fid);
+      if ($ftype == \TType::STOP) {
+        break;
+      }
+      switch ($fid)
+      {
+        case 1:
+          if ($ftype == \TType::BOOL) {
+            $xfer += $input->readBool($this->reminderNotifyEmail);
+          } else {
+            $xfer += $input->skip($ftype);
+          }
+          break;
+        case 2:
+          if ($ftype == \TType::BOOL) {
+            $xfer += $input->readBool($this->reminderNotifyInApp);
+          } else {
+            $xfer += $input->skip($ftype);
+          }
+          break;
+        default:
+          $xfer += $input->skip($ftype);
+          break;
+      }
+      $xfer += $input->readFieldEnd();
+    }
+    $xfer += $input->readStructEnd();
+    return $xfer;
+  }
+
+  public function write($output) {
+    $xfer = 0;
+    $xfer += $output->writeStructBegin('SharedNotebookRecipientSettings');
+    if ($this->reminderNotifyEmail !== null) {
+      $xfer += $output->writeFieldBegin('reminderNotifyEmail', \TType::BOOL, 1);
+      $xfer += $output->writeBool($this->reminderNotifyEmail);
+      $xfer += $output->writeFieldEnd();
+    }
+    if ($this->reminderNotifyInApp !== null) {
+      $xfer += $output->writeFieldBegin('reminderNotifyInApp', \TType::BOOL, 2);
+      $xfer += $output->writeBool($this->reminderNotifyInApp);
+      $xfer += $output->writeFieldEnd();
+    }
+    $xfer += $output->writeFieldStop();
+    $xfer += $output->writeStructEnd();
+    return $xfer;
+  }
+
+}
+
 class SharedNotebook {
   static $_TSPEC;
 
@@ -4625,6 +4757,7 @@ class SharedNotebook {
   public $username = null;
   public $privilege = null;
   public $allowPreview = null;
+  public $recipientSettings = null;
 
   public function __construct($vals=null) {
     if (!isset(self::$_TSPEC)) {
@@ -4677,6 +4810,11 @@ class SharedNotebook {
           'var' => 'allowPreview',
           'type' => \TType::BOOL,
           ),
+        13 => array(
+          'var' => 'recipientSettings',
+          'type' => \TType::STRUCT,
+          'class' => '\EDAM\Types\SharedNotebookRecipientSettings',
+          ),
         );
     }
     if (is_array($vals)) {
@@ -4715,6 +4853,9 @@ class SharedNotebook {
       }
       if (isset($vals['allowPreview'])) {
         $this->allowPreview = $vals['allowPreview'];
+      }
+      if (isset($vals['recipientSettings'])) {
+        $this->recipientSettings = $vals['recipientSettings'];
       }
     }
   }
@@ -4822,6 +4963,14 @@ class SharedNotebook {
             $xfer += $input->skip($ftype);
           }
           break;
+        case 13:
+          if ($ftype == \TType::STRUCT) {
+            $this->recipientSettings = new \EDAM\Types\SharedNotebookRecipientSettings();
+            $xfer += $this->recipientSettings->read($input);
+          } else {
+            $xfer += $input->skip($ftype);
+          }
+          break;
         default:
           $xfer += $input->skip($ftype);
           break;
@@ -4893,6 +5042,14 @@ class SharedNotebook {
     if ($this->allowPreview !== null) {
       $xfer += $output->writeFieldBegin('allowPreview', \TType::BOOL, 12);
       $xfer += $output->writeBool($this->allowPreview);
+      $xfer += $output->writeFieldEnd();
+    }
+    if ($this->recipientSettings !== null) {
+      if (!is_object($this->recipientSettings)) {
+        throw new \TProtocolException('Bad type in structure.', \TProtocolException::INVALID_DATA);
+      }
+      $xfer += $output->writeFieldBegin('recipientSettings', \TType::STRUCT, 13);
+      $xfer += $this->recipientSettings->write($output);
       $xfer += $output->writeFieldEnd();
     }
     $xfer += $output->writeFieldStop();

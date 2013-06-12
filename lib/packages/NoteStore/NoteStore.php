@@ -71,6 +71,7 @@ interface NoteStoreIf {
   public function getPublicNotebook($userId, $publicUri);
   public function createSharedNotebook($authenticationToken, $sharedNotebook);
   public function updateSharedNotebook($authenticationToken, $sharedNotebook);
+  public function setSharedNotebookRecipientSettings($authenticationToken, $sharedNotebookId, $recipientSettings);
   public function sendMessageToSharedNotebookMembers($authenticationToken, $notebookGuid, $messageText, $recipients);
   public function listSharedNotebooks($authenticationToken);
   public function expungeSharedNotebooks($authenticationToken, $sharedNotebookIds);
@@ -83,7 +84,7 @@ interface NoteStoreIf {
   public function emailNote($authenticationToken, $parameters);
   public function shareNote($authenticationToken, $guid);
   public function stopSharingNote($authenticationToken, $guid);
-  public function authenticateToSharedNote($guid, $noteKey);
+  public function authenticateToSharedNote($guid, $noteKey, $authenticationToken);
   public function findRelated($authenticationToken, $query, $resultSpec);
 }
 
@@ -3754,6 +3755,68 @@ class NoteStoreClient implements \EDAM\NoteStore\NoteStoreIf {
     throw new \Exception("updateSharedNotebook failed: unknown result");
   }
 
+  public function setSharedNotebookRecipientSettings($authenticationToken, $sharedNotebookId, $recipientSettings)
+  {
+    $this->send_setSharedNotebookRecipientSettings($authenticationToken, $sharedNotebookId, $recipientSettings);
+    return $this->recv_setSharedNotebookRecipientSettings();
+  }
+
+  public function send_setSharedNotebookRecipientSettings($authenticationToken, $sharedNotebookId, $recipientSettings)
+  {
+    $args = new \EDAM\NoteStore\NoteStore_setSharedNotebookRecipientSettings_args();
+    $args->authenticationToken = $authenticationToken;
+    $args->sharedNotebookId = $sharedNotebookId;
+    $args->recipientSettings = $recipientSettings;
+    $bin_accel = ($this->output_ instanceof \TProtocol::$TBINARYPROTOCOLACCELERATED) && function_exists('thrift_protocol_write_binary');
+    if ($bin_accel)
+    {
+      thrift_protocol_write_binary($this->output_, 'setSharedNotebookRecipientSettings', \TMessageType::CALL, $args, $this->seqid_, $this->output_->isStrictWrite());
+    }
+    else
+    {
+      $this->output_->writeMessageBegin('setSharedNotebookRecipientSettings', \TMessageType::CALL, $this->seqid_);
+      $args->write($this->output_);
+      $this->output_->writeMessageEnd();
+      $this->output_->getTransport()->flush();
+    }
+  }
+
+  public function recv_setSharedNotebookRecipientSettings()
+  {
+    $bin_accel = ($this->input_ instanceof \TProtocol::$TBINARYPROTOCOLACCELERATED) && function_exists('thrift_protocol_read_binary');
+    if ($bin_accel) $result = thrift_protocol_read_binary($this->input_, '\EDAM\NoteStore\NoteStore_setSharedNotebookRecipientSettings_result', $this->input_->isStrictRead());
+    else
+    {
+      $rseqid = 0;
+      $fname = null;
+      $mtype = 0;
+
+      $this->input_->readMessageBegin($fname, $mtype, $rseqid);
+      if ($mtype == \TMessageType::EXCEPTION) {
+        $x = new \TApplicationException();
+        $x->read($this->input_);
+        $this->input_->readMessageEnd();
+        throw $x;
+      }
+      $result = new \EDAM\NoteStore\NoteStore_setSharedNotebookRecipientSettings_result();
+      $result->read($this->input_);
+      $this->input_->readMessageEnd();
+    }
+    if ($result->success !== null) {
+      return $result->success;
+    }
+    if ($result->userException !== null) {
+      throw $result->userException;
+    }
+    if ($result->notFoundException !== null) {
+      throw $result->notFoundException;
+    }
+    if ($result->systemException !== null) {
+      throw $result->systemException;
+    }
+    throw new \Exception("setSharedNotebookRecipientSettings failed: unknown result");
+  }
+
   public function sendMessageToSharedNotebookMembers($authenticationToken, $notebookGuid, $messageText, $recipients)
   {
     $this->send_sendMessageToSharedNotebookMembers($authenticationToken, $notebookGuid, $messageText, $recipients);
@@ -4479,17 +4542,18 @@ class NoteStoreClient implements \EDAM\NoteStore\NoteStoreIf {
     return;
   }
 
-  public function authenticateToSharedNote($guid, $noteKey)
+  public function authenticateToSharedNote($guid, $noteKey, $authenticationToken)
   {
-    $this->send_authenticateToSharedNote($guid, $noteKey);
+    $this->send_authenticateToSharedNote($guid, $noteKey, $authenticationToken);
     return $this->recv_authenticateToSharedNote();
   }
 
-  public function send_authenticateToSharedNote($guid, $noteKey)
+  public function send_authenticateToSharedNote($guid, $noteKey, $authenticationToken)
   {
     $args = new \EDAM\NoteStore\NoteStore_authenticateToSharedNote_args();
     $args->guid = $guid;
     $args->noteKey = $noteKey;
+    $args->authenticationToken = $authenticationToken;
     $bin_accel = ($this->output_ instanceof \TProtocol::$TBINARYPROTOCOLACCELERATED) && function_exists('thrift_protocol_write_binary');
     if ($bin_accel)
     {
@@ -19254,6 +19318,261 @@ class NoteStore_updateSharedNotebook_result {
 
 }
 
+class NoteStore_setSharedNotebookRecipientSettings_args {
+  static $_TSPEC;
+
+  public $authenticationToken = null;
+  public $sharedNotebookId = null;
+  public $recipientSettings = null;
+
+  public function __construct($vals=null) {
+    if (!isset(self::$_TSPEC)) {
+      self::$_TSPEC = array(
+        1 => array(
+          'var' => 'authenticationToken',
+          'type' => \TType::STRING,
+          ),
+        2 => array(
+          'var' => 'sharedNotebookId',
+          'type' => \TType::I64,
+          ),
+        3 => array(
+          'var' => 'recipientSettings',
+          'type' => \TType::STRUCT,
+          'class' => '\EDAM\Types\SharedNotebookRecipientSettings',
+          ),
+        );
+    }
+    if (is_array($vals)) {
+      if (isset($vals['authenticationToken'])) {
+        $this->authenticationToken = $vals['authenticationToken'];
+      }
+      if (isset($vals['sharedNotebookId'])) {
+        $this->sharedNotebookId = $vals['sharedNotebookId'];
+      }
+      if (isset($vals['recipientSettings'])) {
+        $this->recipientSettings = $vals['recipientSettings'];
+      }
+    }
+  }
+
+  public function getName() {
+    return 'NoteStore_setSharedNotebookRecipientSettings_args';
+  }
+
+  public function read($input)
+  {
+    $xfer = 0;
+    $fname = null;
+    $ftype = 0;
+    $fid = 0;
+    $xfer += $input->readStructBegin($fname);
+    while (true)
+    {
+      $xfer += $input->readFieldBegin($fname, $ftype, $fid);
+      if ($ftype == \TType::STOP) {
+        break;
+      }
+      switch ($fid)
+      {
+        case 1:
+          if ($ftype == \TType::STRING) {
+            $xfer += $input->readString($this->authenticationToken);
+          } else {
+            $xfer += $input->skip($ftype);
+          }
+          break;
+        case 2:
+          if ($ftype == \TType::I64) {
+            $xfer += $input->readI64($this->sharedNotebookId);
+          } else {
+            $xfer += $input->skip($ftype);
+          }
+          break;
+        case 3:
+          if ($ftype == \TType::STRUCT) {
+            $this->recipientSettings = new \EDAM\Types\SharedNotebookRecipientSettings();
+            $xfer += $this->recipientSettings->read($input);
+          } else {
+            $xfer += $input->skip($ftype);
+          }
+          break;
+        default:
+          $xfer += $input->skip($ftype);
+          break;
+      }
+      $xfer += $input->readFieldEnd();
+    }
+    $xfer += $input->readStructEnd();
+    return $xfer;
+  }
+
+  public function write($output) {
+    $xfer = 0;
+    $xfer += $output->writeStructBegin('NoteStore_setSharedNotebookRecipientSettings_args');
+    if ($this->authenticationToken !== null) {
+      $xfer += $output->writeFieldBegin('authenticationToken', \TType::STRING, 1);
+      $xfer += $output->writeString($this->authenticationToken);
+      $xfer += $output->writeFieldEnd();
+    }
+    if ($this->sharedNotebookId !== null) {
+      $xfer += $output->writeFieldBegin('sharedNotebookId', \TType::I64, 2);
+      $xfer += $output->writeI64($this->sharedNotebookId);
+      $xfer += $output->writeFieldEnd();
+    }
+    if ($this->recipientSettings !== null) {
+      if (!is_object($this->recipientSettings)) {
+        throw new \TProtocolException('Bad type in structure.', \TProtocolException::INVALID_DATA);
+      }
+      $xfer += $output->writeFieldBegin('recipientSettings', \TType::STRUCT, 3);
+      $xfer += $this->recipientSettings->write($output);
+      $xfer += $output->writeFieldEnd();
+    }
+    $xfer += $output->writeFieldStop();
+    $xfer += $output->writeStructEnd();
+    return $xfer;
+  }
+
+}
+
+class NoteStore_setSharedNotebookRecipientSettings_result {
+  static $_TSPEC;
+
+  public $success = null;
+  public $userException = null;
+  public $notFoundException = null;
+  public $systemException = null;
+
+  public function __construct($vals=null) {
+    if (!isset(self::$_TSPEC)) {
+      self::$_TSPEC = array(
+        0 => array(
+          'var' => 'success',
+          'type' => \TType::I32,
+          ),
+        1 => array(
+          'var' => 'userException',
+          'type' => \TType::STRUCT,
+          'class' => '\EDAM\Error\EDAMUserException',
+          ),
+        2 => array(
+          'var' => 'notFoundException',
+          'type' => \TType::STRUCT,
+          'class' => '\EDAM\Error\EDAMNotFoundException',
+          ),
+        3 => array(
+          'var' => 'systemException',
+          'type' => \TType::STRUCT,
+          'class' => '\EDAM\Error\EDAMSystemException',
+          ),
+        );
+    }
+    if (is_array($vals)) {
+      if (isset($vals['success'])) {
+        $this->success = $vals['success'];
+      }
+      if (isset($vals['userException'])) {
+        $this->userException = $vals['userException'];
+      }
+      if (isset($vals['notFoundException'])) {
+        $this->notFoundException = $vals['notFoundException'];
+      }
+      if (isset($vals['systemException'])) {
+        $this->systemException = $vals['systemException'];
+      }
+    }
+  }
+
+  public function getName() {
+    return 'NoteStore_setSharedNotebookRecipientSettings_result';
+  }
+
+  public function read($input)
+  {
+    $xfer = 0;
+    $fname = null;
+    $ftype = 0;
+    $fid = 0;
+    $xfer += $input->readStructBegin($fname);
+    while (true)
+    {
+      $xfer += $input->readFieldBegin($fname, $ftype, $fid);
+      if ($ftype == \TType::STOP) {
+        break;
+      }
+      switch ($fid)
+      {
+        case 0:
+          if ($ftype == \TType::I32) {
+            $xfer += $input->readI32($this->success);
+          } else {
+            $xfer += $input->skip($ftype);
+          }
+          break;
+        case 1:
+          if ($ftype == \TType::STRUCT) {
+            $this->userException = new \EDAM\Error\EDAMUserException();
+            $xfer += $this->userException->read($input);
+          } else {
+            $xfer += $input->skip($ftype);
+          }
+          break;
+        case 2:
+          if ($ftype == \TType::STRUCT) {
+            $this->notFoundException = new \EDAM\Error\EDAMNotFoundException();
+            $xfer += $this->notFoundException->read($input);
+          } else {
+            $xfer += $input->skip($ftype);
+          }
+          break;
+        case 3:
+          if ($ftype == \TType::STRUCT) {
+            $this->systemException = new \EDAM\Error\EDAMSystemException();
+            $xfer += $this->systemException->read($input);
+          } else {
+            $xfer += $input->skip($ftype);
+          }
+          break;
+        default:
+          $xfer += $input->skip($ftype);
+          break;
+      }
+      $xfer += $input->readFieldEnd();
+    }
+    $xfer += $input->readStructEnd();
+    return $xfer;
+  }
+
+  public function write($output) {
+    $xfer = 0;
+    $xfer += $output->writeStructBegin('NoteStore_setSharedNotebookRecipientSettings_result');
+    if ($this->success !== null) {
+      $xfer += $output->writeFieldBegin('success', \TType::I32, 0);
+      $xfer += $output->writeI32($this->success);
+      $xfer += $output->writeFieldEnd();
+    }
+    if ($this->userException !== null) {
+      $xfer += $output->writeFieldBegin('userException', \TType::STRUCT, 1);
+      $xfer += $this->userException->write($output);
+      $xfer += $output->writeFieldEnd();
+    }
+    if ($this->notFoundException !== null) {
+      $xfer += $output->writeFieldBegin('notFoundException', \TType::STRUCT, 2);
+      $xfer += $this->notFoundException->write($output);
+      $xfer += $output->writeFieldEnd();
+    }
+    if ($this->systemException !== null) {
+      $xfer += $output->writeFieldBegin('systemException', \TType::STRUCT, 3);
+      $xfer += $this->systemException->write($output);
+      $xfer += $output->writeFieldEnd();
+    }
+    $xfer += $output->writeFieldStop();
+    $xfer += $output->writeStructEnd();
+    return $xfer;
+  }
+
+}
+
 class NoteStore_sendMessageToSharedNotebookMembers_args {
   static $_TSPEC;
 
@@ -22097,6 +22416,7 @@ class NoteStore_authenticateToSharedNote_args {
 
   public $guid = null;
   public $noteKey = null;
+  public $authenticationToken = null;
 
   public function __construct($vals=null) {
     if (!isset(self::$_TSPEC)) {
@@ -22109,6 +22429,10 @@ class NoteStore_authenticateToSharedNote_args {
           'var' => 'noteKey',
           'type' => \TType::STRING,
           ),
+        3 => array(
+          'var' => 'authenticationToken',
+          'type' => \TType::STRING,
+          ),
         );
     }
     if (is_array($vals)) {
@@ -22117,6 +22441,9 @@ class NoteStore_authenticateToSharedNote_args {
       }
       if (isset($vals['noteKey'])) {
         $this->noteKey = $vals['noteKey'];
+      }
+      if (isset($vals['authenticationToken'])) {
+        $this->authenticationToken = $vals['authenticationToken'];
       }
     }
   }
@@ -22154,6 +22481,13 @@ class NoteStore_authenticateToSharedNote_args {
             $xfer += $input->skip($ftype);
           }
           break;
+        case 3:
+          if ($ftype == \TType::STRING) {
+            $xfer += $input->readString($this->authenticationToken);
+          } else {
+            $xfer += $input->skip($ftype);
+          }
+          break;
         default:
           $xfer += $input->skip($ftype);
           break;
@@ -22175,6 +22509,11 @@ class NoteStore_authenticateToSharedNote_args {
     if ($this->noteKey !== null) {
       $xfer += $output->writeFieldBegin('noteKey', \TType::STRING, 2);
       $xfer += $output->writeString($this->noteKey);
+      $xfer += $output->writeFieldEnd();
+    }
+    if ($this->authenticationToken !== null) {
+      $xfer += $output->writeFieldBegin('authenticationToken', \TType::STRING, 3);
+      $xfer += $output->writeString($this->authenticationToken);
       $xfer += $output->writeFieldEnd();
     }
     $xfer += $output->writeFieldStop();
