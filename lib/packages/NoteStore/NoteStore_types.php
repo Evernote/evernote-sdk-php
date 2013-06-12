@@ -3043,6 +3043,7 @@ class RelatedQuery {
   public $noteGuid = null;
   public $plainText = null;
   public $filter = null;
+  public $referenceUri = null;
 
   public function __construct($vals=null) {
     if (!isset(self::$_TSPEC)) {
@@ -3060,6 +3061,10 @@ class RelatedQuery {
           'type' => \TType::STRUCT,
           'class' => '\EDAM\NoteStore\NoteFilter',
           ),
+        4 => array(
+          'var' => 'referenceUri',
+          'type' => \TType::STRING,
+          ),
         );
     }
     if (is_array($vals)) {
@@ -3071,6 +3076,9 @@ class RelatedQuery {
       }
       if (isset($vals['filter'])) {
         $this->filter = $vals['filter'];
+      }
+      if (isset($vals['referenceUri'])) {
+        $this->referenceUri = $vals['referenceUri'];
       }
     }
   }
@@ -3116,6 +3124,13 @@ class RelatedQuery {
             $xfer += $input->skip($ftype);
           }
           break;
+        case 4:
+          if ($ftype == \TType::STRING) {
+            $xfer += $input->readString($this->referenceUri);
+          } else {
+            $xfer += $input->skip($ftype);
+          }
+          break;
         default:
           $xfer += $input->skip($ftype);
           break;
@@ -3145,6 +3160,11 @@ class RelatedQuery {
       }
       $xfer += $output->writeFieldBegin('filter', \TType::STRUCT, 3);
       $xfer += $this->filter->write($output);
+      $xfer += $output->writeFieldEnd();
+    }
+    if ($this->referenceUri !== null) {
+      $xfer += $output->writeFieldBegin('referenceUri', \TType::STRING, 4);
+      $xfer += $output->writeString($this->referenceUri);
       $xfer += $output->writeFieldEnd();
     }
     $xfer += $output->writeFieldStop();
