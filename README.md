@@ -49,7 +49,7 @@ Using [Composer](http://getcomposer.org) is one of the options to install Everno
     ```json
     {
         "require": {
-            "evernote/evernote": "1.23.*"
+            "evernote/evernote": "dev-master"
         }
     }
     ```
