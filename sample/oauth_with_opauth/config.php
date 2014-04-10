@@ -19,8 +19,9 @@
      * Opauth configuration
      */
     $config = array(
-      'path' => '/auth/',
-      'callback_url' => '/',
+      'dir' => '/path_to/oauth_with_opauth/',
+      'path' => '{dir}auth/',
+      'callback_url' => '{dir}',
       'security_salt' => 'LDFmiilYf8Fyw5W10rx4W1KsVrieQCnpBzzpTBWA5vJidQKDx8pMJbmw28R1C4n',
       'Strategy' => array(
         'Evernote' => array(

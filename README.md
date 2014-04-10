@@ -40,6 +40,32 @@ Web applications must use OAuth to authenticate to the Evernote service. The cod
 
 There are two pages in the sample. index.php demonstrates each step of the OAuth process in detail. This is useful for developers, but not what an end user would see. sampleApp.php demonstrates the simplified process, which is similar to what you would implement in your production app.
 
+Getting Started - OAuth with Opauth
+-----------------------------------
+
+1. Install the dependencies
+
+    cd sample/oauth_with_opauth
+
+    php composer.phar install
+
+2. Install the Strategy
+
+    cd sample/oauth_with_opauth/vendor/opauth/opauth/lib/Opauth/Strategy/README.md
+
+    git clone git://github.com/evernote/opauth-evernote.git Evernote
+
+3. Open the file sample/oauth_with_opauth/config.php
+4. Fill in your Evernote API consumer key and secret.
+5. Fill the 'dir' key as follow :
+
+    If your url is http://localhost/oauth_with_opauth, path should be set to '/oauth_with_opauth/auth/'
+
+6. Deploy the sample/oauth_with_opauth directory to your web server
+7. Load the web application in your browser (e.g. http://localhost/oauth_with_opauth)
+
+
+
 Installing SDK using Composer
 -----------------------------
 Using [Composer](http://getcomposer.org) is one of the options to install Evernote SDK for PHP.
