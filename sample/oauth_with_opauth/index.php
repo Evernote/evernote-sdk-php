@@ -59,11 +59,11 @@
         <ul>
 <?php if (isset($_SESSION['accessToken'])) { ?>
             <li>
-                <a href="/?action=reset">Click here</a> to start over
+                <a href="./?action=reset">Click here</a> to start over
             </li>
 <?php } else { ?>
             <li>
-                <a href="/auth/evernote">Click here</a> to authenticate
+                <a href="./auth/evernote">Click here</a> to authenticate
             </li>
 <?php } ?>
         </ul>
