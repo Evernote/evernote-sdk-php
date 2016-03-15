@@ -124,7 +124,7 @@ class Store
     public function __construct($token, $clientClass, $storeUrl)
     {
         $this->token = $token;
-        if (preg_match(':A=(.+):', $token, $matches)) {
+        if (preg_match('/:A=([^:]+):/', $token, $matches)) {
             $this->userAgentId = $matches[1];
         }
         $this->client = $this->getThriftClient($clientClass, $storeUrl);
