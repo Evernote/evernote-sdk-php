@@ -12,6 +12,6 @@ $GLOBALS['EDAM_UserStore_UserStore_CONSTANTS'] = array();
 
 $GLOBALS['EDAM_UserStore_UserStore_CONSTANTS']['EDAM_VERSION_MAJOR'] = 1;
 
-$GLOBALS['EDAM_UserStore_UserStore_CONSTANTS']['EDAM_VERSION_MINOR'] = 25;
+$GLOBALS['EDAM_UserStore_UserStore_CONSTANTS']['EDAM_VERSION_MINOR'] = 26;
 
 ?>
