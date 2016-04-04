@@ -52,10 +52,10 @@ if ($authToken == "your developer token") {
 }
 
 // Initial development is performed on our sandbox server. To use the production
-// service, change "sandbox.evernote.com" to "www.evernote.com" and replace your
+// service, change 'sandbox' => true to 'sandbox' => false and replace your
 // developer token above with a token from
 // https://www.evernote.com/api/DeveloperToken.action
-$client = new Client(array('token' => $authToken));
+$client = new Client(array('token' => $authToken, 'sandbox' => true));
 
 $userStore = $client->getUserStore();
 
