@@ -45,14 +45,14 @@ class Client
     {
         $oauth = new \OAuth($this->consumerKey, $this->consumerSecret);
 
-        return $oauth->getRequestToken($this->getEndpoint('oauth'), $callbackUrl);
+        return $oauth->getRequestToken($this->getEndpoint('oauth'), $callbackUrl, 'GET');
     }
 
     public function getAccessToken($oauthToken, $oauthTokenSecret, $oauthVerifier)
     {
         $oauth = new \OAuth($this->consumerKey, $this->consumerSecret);
         $oauth->setToken($oauthToken, $oauthTokenSecret);
-        $accessToken= $oauth->getAccessToken($this->getEndpoint('oauth'), null, $oauthVerifier);
+        $accessToken= $oauth->getAccessToken($this->getEndpoint('oauth'), null, $oauthVerifier, 'GET');
 
         $this->token = $accessToken['oauth_token'];
 
